@@ -7,7 +7,7 @@
 const CONFIG = {
   center: [42.58, 20.95],
   zoom: 9,
-  colors: { bank: '#1d4ed8', atm: '#059669', kom: '#f59e0b' },
+  colors: { bank: '#1d4ed8', bankPak: '#7c3aed', bankTjera: '#9ca3af', atm: '#059669', kom: '#f59e0b' },
   data: { bank: 'data/bankat.geojson', atm: 'data/atm.geojson', kom: 'data/komunat.geojson' }
 };
 
@@ -44,17 +44,33 @@ const clusterAtm  = L.markerClusterGroup({ maxClusterRadius: 50, disableClusteri
 let komLayer = null;          // shtresa e komunave (GeoJSON)
 let bufferLayer = L.layerGroup().addTo(map);   // per analizen (Faza 2)
 
-function pointStyle(kind) {
-  return { radius: 6, fillColor: CONFIG.colors[kind], color: '#fff', weight: 1.5, opacity: 1, fillOpacity: .9 };
+// Ngjyra e bankes sipas nenkategorise (njohura / pak / tjera)
+function bankColor(p) {
+  switch (p && p.kategoria) {
+    case 'pak':   return CONFIG.colors.bankPak;
+    case 'tjera': return CONFIG.colors.bankTjera;
+    default:      return CONFIG.colors.bank;
+  }
+}
+// Etiketa shqip e nenkategorise se bankes
+function katLabel(k) {
+  return k === 'pak' ? 'Më pak e njohur'
+       : k === 'tjera' ? 'Tjera (status bank)'
+       : k === 'njohura' ? 'Bankë e njohur' : '—';
+}
+function pointStyle(kind, p) {
+  const fill = kind === 'bank' ? bankColor(p) : CONFIG.colors[kind];
+  return { radius: 6, fillColor: fill, color: '#fff', weight: 1.5, opacity: 1, fillOpacity: .9 };
 }
 
 // Ndertimi i popup-it per nje pike
 function pointPopup(p, kind) {
   const tip = kind === 'bank' ? 'Bankë' : 'ATM';
+  const katRow = kind === 'bank' ? `<br><small>Kategoria:</small> ${katLabel(p.kategoria)}` : '';
   return `<b>${p.name || tip}</b><br>
           <small>Lloji:</small> ${tip}<br>
           <small>Marka:</small> ${p.banka || '—'}<br>
-          <small>Komuna:</small> ${p.komuna || '—'}`;
+          <small>Komuna:</small> ${p.komuna || '—'}${katRow}`;
 }
 
 // Krijon markerat nga nje liste features dhe i shton ne cluster-in perkates
@@ -62,7 +78,7 @@ function buildMarkers(features, kind, cluster) {
   cluster.clearLayers();
   features.forEach(f => {
     const c = f.geometry.coordinates;       // [lon,lat]
-    const m = L.circleMarker([c[1], c[0]], pointStyle(kind));
+    const m = L.circleMarker([c[1], c[0]], pointStyle(kind, f.properties));
     m.feature = f;
     m.bindPopup(pointPopup(f.properties, kind));
     cluster.addLayer(m);
@@ -85,7 +101,9 @@ function komOnEach(feature, layer) {
 /* ---------------------- Legjenda / çelësi hartografik ---------------------- */
 function buildLegend() {
   document.getElementById('legend').innerHTML = `
-    <div class="row"><span class="swatch bank"></span> Bankë</div>
+    <div class="row"><span class="swatch bank"></span> Bankë e njohur</div>
+    <div class="row"><span class="swatch bank-pak"></span> Bankë më pak e njohur</div>
+    <div class="row"><span class="swatch bank-tjera"></span> Tjera (status bank)</div>
     <div class="row"><span class="swatch atm"></span> ATM</div>
     <div class="row"><span class="swatch line"></span> Kufi komune</div>
     <div class="row" style="margin-top:8px"><small>Në zoom të vogël pikat grupohen (cluster); në zoom të madh shfaqen individualisht.</small></div>`;
@@ -168,19 +186,24 @@ function populateFilters() {
 }
 
 /* ---------- Filtri (kërkim + selektim sipas kritereve) ---------- */
-function matchFeature(f, txt, kom, banka) {
+function matchFeature(f, txt, kom, banka, kat) {
   const p = f.properties;
   if (txt && !((p.name || '').toLowerCase().includes(txt) || (p.banka || '').toLowerCase().includes(txt))) return false;
   if (kom && p.komuna !== kom) return false;
   if (banka && p.banka !== banka) return false;
+  if (kat) {                                   // kategoria vlen vetem per banka
+    if (p.fclass !== 'bank') return false;
+    if ((p.kategoria || 'njohura') !== kat) return false;
+  }
   return true;
 }
 function applyFilter() {
   const txt = document.getElementById('searchText').value.trim().toLowerCase();
   const kom = document.getElementById('filterKomuna').value;
   const banka = document.getElementById('filterBanka').value;
-  const b = STATE.raw.bank.features.filter(f => matchFeature(f, txt, kom, banka));
-  const a = STATE.raw.atm.features.filter(f => matchFeature(f, txt, kom, banka));
+  const kat = document.getElementById('filterKategoria').value;
+  const b = STATE.raw.bank.features.filter(f => matchFeature(f, txt, kom, banka, kat));
+  const a = STATE.raw.atm.features.filter(f => matchFeature(f, txt, kom, banka, kat));
   refreshPoints(b, a);
   // Zoom te rezultatet nese ka
   const all = [...b, ...a].map(f => [f.geometry.coordinates[1], f.geometry.coordinates[0]]);
@@ -190,6 +213,7 @@ function resetFilter() {
   document.getElementById('searchText').value = '';
   document.getElementById('filterKomuna').value = '';
   document.getElementById('filterBanka').value = '';
+  document.getElementById('filterKategoria').value = '';
   refreshPoints(STATE.raw.bank.features, STATE.raw.atm.features);
   map.fitBounds(komLayer.getBounds(), { padding: [10, 10] });
 }
@@ -199,6 +223,7 @@ document.getElementById('searchText').addEventListener('keyup', e => { if (e.key
 // Apliko automatikisht sapo ndryshohet dropdown-i (pa pasur nevoje per butonin "Apliko")
 document.getElementById('filterKomuna').addEventListener('change', applyFilter);
 document.getElementById('filterBanka').addEventListener('change', applyFilter);
+document.getElementById('filterKategoria').addEventListener('change', applyFilter);
 
 /* ---------- Analizë hapësinore: buffer rreth një pike ---------- */
 function haversine(lat1, lon1, lat2, lon2) {
