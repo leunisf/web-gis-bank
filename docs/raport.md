@@ -4,6 +4,8 @@
 **Lënda:** Web GIS  
 **Tema:** Shpërndarja hapësinore e bankave dhe ATM-ve në Kosovë  
 **Territori:** Republika e Kosovës (38 komuna)  
+**Aplikacioni live:** https://leunisf.github.io/web-gis-bank/  
+**Repo:** https://github.com/leunisf/web-gis-bank  
 
 ---
 

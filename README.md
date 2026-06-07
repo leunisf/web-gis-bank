@@ -3,7 +3,8 @@
 Aplikacion Web GIS për lokalizimin, kërkimin dhe analizën e **bankave** dhe **bankomatëve (ATM)**
 në territorin e **Kosovës**. Detyrë kursi për lëndën **Web GIS**.
 
-**Aplikacioni live:** _(plotësohet pas publikimit në GitHub Pages)_
+**Aplikacioni live:** <https://leunisf.github.io/web-gis-bank/>  
+**Repo:** <https://github.com/leunisf/web-gis-bank>
 
 ---
 
@@ -43,11 +44,11 @@ git init
 git add .
 git commit -m "Web GIS: Banka & ATM Kosovë"
 git branch -M main
-git remote add origin https://github.com/<USERNAME>/<REPO>.git
+git remote add origin https://github.com/leunisf/web-gis-bank.git
 git push -u origin main
 ```
 Pastaj: **GitHub → Settings → Pages → Source: `main` / root → Save**.
-Aplikacioni del te `https://<USERNAME>.github.io/<REPO>/`.
+Aplikacioni del te <https://leunisf.github.io/web-gis-bank/>.
 
 ## Të dhënat & CRS
 - Banka/ATM: OpenStreetMap, **EPSG:4326**.
