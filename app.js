@@ -67,12 +67,36 @@ function typeIcon(kind) {
   });
 }
 
+// Historiku i shkurtër i bankave (feature shtesë VETËM për bankat).
+// Burimi: njohuri të përgjithshme publike mbi sektorin bankar të Kosovës.
+const HISTORIK = {
+  'Raiffeisen Bank': { viti: '2002', teksti: 'Pjesë e grupit austriak Raiffeisen Bank International. Hyri në Kosovë në 2002 me blerjen e American Bank of Kosovo; sot ndër bankat më të mëdha në vend.' },
+  'ProCredit Bank': { viti: '1999', teksti: 'Themeluar në 1999 si “Micro Enterprise Bank” (MEB) — banka e parë private në Kosovën e pasluftës. U riemërua ProCredit Bank në 2003 (ProCredit Holding, Gjermani).' },
+  'TEB': { viti: '2008', teksti: 'TEB Sh.A. — bankë me kapital turk (TEB, partner i BNP Paribas). Nisi veprimtarinë në Kosovë në vitin 2008.' },
+  'NLB Banka': { viti: '2008', teksti: 'Pjesë e grupit slloven Nova Ljubljanska Banka (NLB); dikur e njohur si NLB Prishtina. Ndër bankat kryesore në treg.' },
+  'BKT': { viti: '2007', teksti: 'Banka Kombëtare Tregtare — banka më e vjetër në Shqipëri (1925). Hapi degën e parë në Kosovë në vitin 2007.' },
+  'Banka Ekonomike': { viti: '2001', teksti: 'Bankë vendore kosovare, e themeluar në 2001; ndër bankat e para me kapital vendor.' },
+  'Banka per Biznes (BPB)': { viti: '2001', teksti: 'Banka për Biznes — bankë vendore kosovare e themeluar në 2001, e fokusuar te ndërmarrjet dhe bizneset.' },
+  'Credins Bank': { viti: '2003', teksti: 'Bankë me origjinë shqiptare (themeluar në Shqipëri më 2003); zgjeroi veprimtarinë në Kosovë vitet e fundit.' },
+  'Ziraat Bank': { viti: '1863', teksti: 'Türkiye Cumhuriyeti Ziraat Bankası — bankë shtetërore turke me histori që nga 1863; vepron me degë në Kosovë.' },
+  'Isbank': { viti: '1924', teksti: 'Türkiye İş Bankası — bankë turke e themeluar në 1924; e pranishme në Kosovë me degë.' },
+  'Banka Qendrore': { viti: '2008', teksti: 'Banka Qendrore e Republikës së Kosovës (BQK) — autoriteti monetar i vendit, e themeluar në 2008, pasardhëse e Autoritetit Qendror Bankar.' },
+  'Komercijalna Banka': { viti: '', teksti: 'Bankë me kapital serb që vepron kryesisht në komunat me shumicë serbe në veri të Kosovës.' },
+  'Postanska Stedionica': { viti: '', teksti: 'Banka Poštanska štedionica (kapital serb), vepron kryesisht në komunat veriore me shumicë serbe.' },
+  'Narodna Banka': { viti: '', teksti: 'Degë e sistemit bankar serb, e pranishme në komunat veriore me shumicë serbe.' }
+};
+
 // Ndertimi i popup-it per nje pike (pa "Marka" ne detaje)
 function pointPopup(p, kind) {
   const tip = typeLabel(kind);
+  let extra = '';
+  if (kind === 'bank') {                       // historiku — feature vetëm për bankat
+    const h = HISTORIK[p.banka];
+    if (h) extra = `<div class="histori"><b>ℹ️ Historiku${h.viti ? ' (' + h.viti + ')' : ''}:</b> ${h.teksti}</div>`;
+  }
   return `<b>${p.name || tip}</b><br>
           <small>Lloji:</small> ${tip}<br>
-          <small>Komuna:</small> ${p.komuna || '—'}
+          <small>Komuna:</small> ${p.komuna || '—'}${extra}
           <div style="margin-top:6px"><button type="button" class="report-btn">⚠️ Raporto problem</button></div>`;
 }
 
@@ -364,6 +388,8 @@ function updateKomClickable() {
   // Komunat klikueshme vetëm nëse checkbox-i lejon DHE s'ka mode aktive (buffer/matje/vgi)
   const allow = document.getElementById('lyrKomClick').checked && !STATE.mode;
   map.getContainer().classList.toggle('no-kom-click', !allow);
+  // Zgjidhje e sigurt: çaktivizo klikimin direkt mbi poligonet SVG të komunave
+  if (komLayer) komLayer.eachLayer(l => { if (l._path) l._path.style.pointerEvents = allow ? '' : 'none'; });
 }
 document.getElementById('lyrKomClick').addEventListener('change', updateKomClickable);
 
