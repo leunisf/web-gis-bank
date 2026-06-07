@@ -52,13 +52,18 @@ let bufferLayer = L.layerGroup().addTo(map);   // per analizen (Faza 2)
 function typeLabel(kind) {
   return kind === 'bank' ? 'Bankë' : kind === 'atm' ? 'ATM' : 'Transfer';
 }
-// Ikona te ndryshme per cdo lloj (emoji ne nje rrethore me ngjyren e llojit)
-const TYPE_EMOJI = { bank: '🏦', atm: '🏧', transfer: '💱' };
+// Ikona te ndryshme per cdo lloj (vetem emoji, pa rreth). Banka me e madhe.
+const TYPE_ICON = {
+  bank:     { emoji: '🏦', size: 30 },
+  atm:      { emoji: '🏧', size: 22 },
+  transfer: { emoji: '💱', size: 22 }
+};
 function typeIcon(kind) {
+  const t = TYPE_ICON[kind];
   return L.divIcon({
     className: 'type-pin',
-    html: `<span class="pin pin-${kind}">${TYPE_EMOJI[kind]}</span>`,
-    iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14]
+    html: `<span class="pin-emoji" style="font-size:${t.size}px">${t.emoji}</span>`,
+    iconSize: [t.size, t.size], iconAnchor: [t.size / 2, t.size / 2], popupAnchor: [0, -t.size / 2]
   });
 }
 
@@ -105,9 +110,9 @@ function komOnEach(feature, layer) {
 /* ---------------------- Legjenda / çelësi hartografik ---------------------- */
 function buildLegend() {
   document.getElementById('legend').innerHTML = `
-    <div class="row"><span class="pin pin-bank pin-sm">🏦</span> Bankë</div>
-    <div class="row"><span class="pin pin-atm pin-sm">🏧</span> ATM</div>
-    <div class="row"><span class="pin pin-transfer pin-sm">💱</span> Transfer (WU, Ria, këmbim...)</div>
+    <div class="row"><span class="leg-emoji" style="font-size:20px">🏦</span> Bankë</div>
+    <div class="row"><span class="leg-emoji">🏧</span> ATM</div>
+    <div class="row"><span class="leg-emoji">💱</span> Transfer (WU, Ria, këmbim...)</div>
     <div class="row"><span class="swatch line"></span> Kufi komune</div>
     <div class="row" style="margin-top:8px"><small>Në zoom të vogël pikat grupohen (cluster); në zoom të madh shfaqen individualisht.</small></div>`;
 }
