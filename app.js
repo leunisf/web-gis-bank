@@ -299,8 +299,8 @@ document.getElementById('dlCsv').addEventListener('click', () => {
    Punon menjëherë me localStorage; nëse vendos çelësat e Supabase, ruan online.
    =========================================================================== */
 const SUPABASE = {
-  url: '',          // p.sh. 'https://xxxx.supabase.co'  (lere bosh per modalitet lokal)
-  anonKey: '',      // anon public key
+  url: 'https://qqaizejspemlsneqmeav.supabase.co',   // Project URL
+  anonKey: 'sb_publishable_h4VK0t3mZSJC49IjjYleuQ_jETsANDD',   // publishable (public) key
   table: 'contributions'
 };
 const vgiPendingLayer = L.layerGroup().addTo(map);
