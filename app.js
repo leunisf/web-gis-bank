@@ -196,6 +196,9 @@ function resetFilter() {
 document.getElementById('applyFilter').addEventListener('click', applyFilter);
 document.getElementById('resetFilter').addEventListener('click', resetFilter);
 document.getElementById('searchText').addEventListener('keyup', e => { if (e.key === 'Enter') applyFilter(); });
+// Apliko automatikisht sapo ndryshohet dropdown-i (pa pasur nevoje per butonin "Apliko")
+document.getElementById('filterKomuna').addEventListener('change', applyFilter);
+document.getElementById('filterBanka').addEventListener('change', applyFilter);
 
 /* ---------- Analizë hapësinore: buffer rreth një pike ---------- */
 function haversine(lat1, lon1, lat2, lon2) {
