@@ -38,7 +38,6 @@
         <select id="filterKategoria">
           <option value="">— Të gjitha —</option>
           <option value="njohura">Banka të njohura</option>
-          <option value="pak">Më pak të njohura</option>
           <option value="tjera">Tjera (status bank)</option>
         </select>
       </label>
@@ -69,6 +68,37 @@
         <button id="dlGeojson">GeoJSON</button>
         <button id="dlCsv">CSV</button>
       </div>
+    </section>
+
+    <!-- RAPORTIM (ATM nuk punon, etj.) -->
+    <section class="panel" id="reportPanel">
+      <h2>⚠️ Raporto problem</h2>
+      <p class="hint">Raporto nëse një ATM nuk punon ose ka problem. Kliko <b>“⚠️ Raporto problem”</b> te një pikë në hartë (plotësohet vetë), ose zgjedh këtu.</p>
+      <form id="reportForm">
+        <label>Lloji
+          <select id="repType"><option value="atm">ATM</option><option value="bank">Bankë</option></select>
+        </label>
+        <label>Banka
+          <select id="repBanka"><option value="">— Zgjedh bankën —</option></select>
+        </label>
+        <label>Problemi
+          <select id="repProblem">
+            <option value="nuk_punon">ATM nuk punon</option>
+            <option value="jashte_sherbimit">Jashtë shërbimit / pa para</option>
+            <option value="vendndodhje_gabim">Vendndodhje e gabuar</option>
+            <option value="mbyllur">E mbyllur / s'ekziston më</option>
+            <option value="tjeter">Tjetër</option>
+          </select>
+        </label>
+        <label>Përshkrim / koment
+          <textarea id="repKoment" rows="3" placeholder="Përshkruaj problemin..."></textarea>
+        </label>
+        <p class="hint" id="repCoord">Pika: —</p>
+        <div class="btn-row">
+          <button type="submit" class="primary">Dërgo raportin</button>
+        </div>
+      </form>
+      <p class="hint" id="repStatus"></p>
     </section>
 
     <!-- VGI / CROWDSOURCING (pika 6a) -->

@@ -32,6 +32,9 @@ const basemaps = {
 basemaps.osm.addTo(map);
 let currentBasemap = basemaps.osm;
 
+// Shkalla grafike (poshte-djathtas) — perditesohet automatikisht ne cdo zoom
+L.control.scale({ position: 'bottomright', metric: true, imperial: false, maxWidth: 180 }).addTo(map);
+
 document.getElementById('basemapSel').addEventListener('change', e => {
   map.removeLayer(currentBasemap);
   currentBasemap = basemaps[e.target.value];
@@ -63,14 +66,14 @@ function pointStyle(kind, p) {
   return { radius: 6, fillColor: fill, color: '#fff', weight: 1.5, opacity: 1, fillOpacity: .9 };
 }
 
-// Ndertimi i popup-it per nje pike
+// Ndertimi i popup-it per nje pike (pa "Marka" ne detaje)
 function pointPopup(p, kind) {
   const tip = kind === 'bank' ? 'Bankë' : 'ATM';
   const katRow = kind === 'bank' ? `<br><small>Kategoria:</small> ${katLabel(p.kategoria)}` : '';
   return `<b>${p.name || tip}</b><br>
           <small>Lloji:</small> ${tip}<br>
-          <small>Marka:</small> ${p.banka || '—'}<br>
-          <small>Komuna:</small> ${p.komuna || '—'}${katRow}`;
+          <small>Komuna:</small> ${p.komuna || '—'}${katRow}
+          <div style="margin-top:6px"><button type="button" class="report-btn">⚠️ Raporto problem</button></div>`;
 }
 
 // Krijon markerat nga nje liste features dhe i shton ne cluster-in perkates
@@ -81,6 +84,11 @@ function buildMarkers(features, kind, cluster) {
     const m = L.circleMarker([c[1], c[0]], pointStyle(kind, f.properties));
     m.feature = f;
     m.bindPopup(pointPopup(f.properties, kind));
+    // Lidh butonin "Raporto" me te dhenat e kesaj pike kur hapet popup-i
+    m.on('popupopen', e => {
+      const btn = e.popup.getElement().querySelector('.report-btn');
+      if (btn) btn.onclick = () => openReport(f.properties, c);
+    });
     cluster.addLayer(m);
   });
 }
@@ -102,7 +110,6 @@ function komOnEach(feature, layer) {
 function buildLegend() {
   document.getElementById('legend').innerHTML = `
     <div class="row"><span class="swatch bank"></span> Bankë e njohur</div>
-    <div class="row"><span class="swatch bank-pak"></span> Bankë më pak e njohur</div>
     <div class="row"><span class="swatch bank-tjera"></span> Tjera (status bank)</div>
     <div class="row"><span class="swatch atm"></span> ATM</div>
     <div class="row"><span class="swatch line"></span> Kufi komune</div>
@@ -183,6 +190,9 @@ function populateFilters() {
   [...komSet].sort((a, b) => a.localeCompare(b)).forEach(k => komSel.add(new Option(k, k)));
   const bankSel = document.getElementById('filterBanka');
   [...bankSet].sort((a, b) => a.localeCompare(b)).forEach(b => bankSel.add(new Option(b, b)));
+  // I njejti liste markash per formularin e raportimit
+  const repSel = document.getElementById('repBanka');
+  [...bankSet].sort((a, b) => a.localeCompare(b)).forEach(b => repSel.add(new Option(b, b)));
 }
 
 /* ---------- Filtri (kërkim + selektim sipas kritereve) ---------- */
@@ -321,6 +331,65 @@ document.getElementById('dlCsv').addEventListener('click', () => {
   const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
   downloadFile('banka_atm_filtruar.csv', '﻿' + csv, 'text/csv;charset=utf-8');
 });
+
+/* ===========================================================================
+   RAPORTIM — "ndonjë ATM nuk punon" etj. (raporto saktë bankës + koment)
+   Ruan ne Supabase tabelen 'reports' (shih db/supabase-reports.sql);
+   nese s'ka lidhje, ruan lokalisht (localStorage).
+   =========================================================================== */
+function openReport(p, coords) {
+  document.getElementById('repType').value = p.fclass || 'atm';
+  const repSel = document.getElementById('repBanka');
+  if (p.banka && p.banka !== 'E panjohur') {
+    if (![...repSel.options].some(o => o.value === p.banka)) repSel.add(new Option(p.banka, p.banka));
+    repSel.value = p.banka;
+  } else { repSel.value = ''; }
+  STATE.reportPoint = coords ? { lon: coords[0], lat: coords[1], name: p.name, osm_id: p.osm_id } : null;
+  document.getElementById('repCoord').textContent = coords
+    ? `Pika: ${p.name || '—'} (${coords[1].toFixed(5)}, ${coords[0].toFixed(5)})` : 'Pika: — (zgjedh nga harta)';
+  document.getElementById('reportPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('repKoment').focus();
+}
+
+document.getElementById('reportForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const rp = STATE.reportPoint || {};
+  const report = {
+    fclass:  document.getElementById('repType').value,
+    banka:   document.getElementById('repBanka').value || null,
+    problem: document.getElementById('repProblem').value,
+    koment:  document.getElementById('repKoment').value.trim() || null,
+    name:    rp.name || null,
+    lon:     rp.lon ?? null,
+    lat:     rp.lat ?? null,
+    status:  'pending'
+  };
+  const ok = await saveReport(report);
+  document.getElementById('repStatus').textContent = ok
+    ? '✅ Faleminderit! Raporti u dërgua.'
+    : '⚠️ U ruajt lokalisht (Supabase reports jo i konfiguruar).';
+  document.getElementById('reportForm').reset();
+  STATE.reportPoint = null;
+  document.getElementById('repCoord').textContent = 'Pika: —';
+});
+
+async function saveReport(r) {
+  if (SUPABASE.url && SUPABASE.anonKey) {
+    try {
+      const res = await fetch(`${SUPABASE.url}/rest/v1/reports`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: SUPABASE.anonKey,
+                   Authorization: `Bearer ${SUPABASE.anonKey}`, Prefer: 'return=minimal' },
+        body: JSON.stringify(r)
+      });
+      if (res.ok) return true;
+    } catch (err) { console.warn('Supabase reports dështoi, ruaj lokal:', err); }
+  }
+  const arr = JSON.parse(localStorage.getItem('reports') || '[]');
+  arr.push(r); localStorage.setItem('reports', JSON.stringify(arr));
+  return false;
+}
 
 /* ===========================================================================
    FAZA 3 — VGI / Crowdsourcing (editim i kufizuar me moderim)
