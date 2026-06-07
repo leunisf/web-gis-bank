@@ -42,9 +42,9 @@ document.getElementById('basemapSel').addEventListener('change', e => {
 });
 
 /* ---------------------- Shtresat (layer groups) ---------------------- */
-const clusterBank = L.markerClusterGroup({ maxClusterRadius: 50, disableClusteringAtZoom: 14 });
-const clusterAtm  = L.markerClusterGroup({ maxClusterRadius: 50, disableClusteringAtZoom: 14 });
-const clusterTransfer = L.markerClusterGroup({ maxClusterRadius: 50, disableClusteringAtZoom: 14 });
+const clusterBank = L.markerClusterGroup({ maxClusterRadius: 40, disableClusteringAtZoom: 12 });
+const clusterAtm  = L.markerClusterGroup({ maxClusterRadius: 40, disableClusteringAtZoom: 12 });
+const clusterTransfer = L.markerClusterGroup({ maxClusterRadius: 40, disableClusteringAtZoom: 12 });
 let komLayer = null;          // shtresa e komunave (GeoJSON)
 let bufferLayer = L.layerGroup().addTo(map);   // per analizen (Faza 2)
 
