@@ -51,5 +51,10 @@ create policy "moderim vetem i autentikuar" on public.contributions
 create policy "fshirje vetem i autentikuar" on public.contributions
   for delete using (auth.role() = 'authenticated');
 
+-- (OPSIONALE) Lejo fshirjen PUBLIKE vetem te rreshtave 'pending', qe perdoruesi
+-- te mund te fshije pikat qe shtoi vete (butoni "Fshi" ne hartë). Ekzekuto nese e do.
+create policy "fshirje publike e pending" on public.contributions
+  for delete using (status = 'pending');
+
 create index if not exists idx_contrib_status on public.contributions(status);
 create index if not exists idx_contrib_geom on public.contributions using gist(geom);

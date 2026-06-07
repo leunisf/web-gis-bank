@@ -122,12 +122,19 @@ function buildMarkers(features, kind, cluster) {
 function komStyle() {
   return { color: CONFIG.colors.kom, weight: 1.5, fillColor: CONFIG.colors.kom, fillOpacity: .05, className: 'kom-path' };
 }
+// Stili bazë i një komune, sipas modalitetit (choropleth ose normal)
+function komBaseStyle(feature) {
+  return STATE.choropleth
+    ? { color: '#fff', weight: 1, fillColor: choroColor(feature.properties.banka_count), fillOpacity: .75 }
+    : komStyle();
+}
 function komOnEach(feature, layer) {
   const p = feature.properties;
   layer.bindPopup(`<b>${p.name}</b><br><small>Banka:</small> ${p.banka_count} &nbsp; <small>ATM:</small> ${p.atm_count}`);
   layer.on({
-    mouseover: e => e.target.setStyle({ fillOpacity: .25, weight: 2.5 }),
-    mouseout:  e => { if (!STATE.choropleth) komLayer.resetStyle(e.target); }
+    mouseover: e => e.target.setStyle({ weight: 3, fillOpacity: STATE.choropleth ? .9 : .25 }),
+    // Kthe gjithmonë në stilin bazë (rregullon mbetjen e hijezimit gjatë choropleth-it)
+    mouseout:  e => e.target.setStyle(komBaseStyle(e.target.feature))
   });
 }
 
@@ -596,13 +603,44 @@ async function getPending() {
   return JSON.parse(localStorage.getItem('vgi') || '[]');
 }
 async function renderPending() {
+  vgiPendingLayer.clearLayers();
   const list = await getPending();
   list.forEach(c => {
     const icon = L.divIcon({ className: '', html: '📌', iconSize: [20, 20] });
-    L.marker([c.lat, c.lon], { icon })
-      .bindPopup(`<b>${c.name}</b> <small>(propozim/pending)</small><br>Lloji: ${c.fclass}<br>Marka: ${c.banka || '—'}`)
-      .addTo(vgiPendingLayer);
+    const m = L.marker([c.lat, c.lon], { icon }).addTo(vgiPendingLayer);
+    m.bindPopup(`<b>${c.name}</b> <small>(propozim/pending)</small><br>Lloji: ${c.fclass}<br>Marka: ${c.banka || '—'}
+      <div style="margin-top:6px"><button type="button" class="del-vgi">🗑️ Fshi këtë pikë</button></div>`);
+    m.on('popupopen', e => {
+      const btn = e.popup.getElement().querySelector('.del-vgi');
+      if (btn) btn.onclick = async () => {
+        if (!confirm('Të fshihet kjo pikë e shtuar?')) return;
+        const ok = await deleteContribution(c, m);
+        document.getElementById('vgiStatus').textContent = ok
+          ? '🗑️ Pika u fshi.'
+          : '⚠️ S\'u fshi dot online (kërkohet leja në Supabase). U hoq nga ruajtja lokale nëse ekzistonte.';
+      };
+    });
   });
+}
+
+// Fshin nje kontribut: provon Supabase (DELETE sipas id), pastaj localStorage
+async function deleteContribution(c, marker) {
+  let ok = false;
+  if (SUPABASE.url && SUPABASE.anonKey && c.id != null) {
+    try {
+      const r = await fetch(`${SUPABASE.url}/rest/v1/${SUPABASE.table}?id=eq.${c.id}`, {
+        method: 'DELETE',
+        headers: { apikey: SUPABASE.anonKey, Authorization: `Bearer ${SUPABASE.anonKey}` }
+      });
+      ok = r.ok;
+    } catch (err) { /* fallback */ }
+  }
+  // Hiq edhe nga ruajtja lokale (nëse pika u shtua offline)
+  const arr = JSON.parse(localStorage.getItem('vgi') || '[]');
+  const arr2 = arr.filter(x => !(x.lat === c.lat && x.lon === c.lon && x.name === c.name));
+  if (arr2.length !== arr.length) { localStorage.setItem('vgi', JSON.stringify(arr2)); ok = true; }
+  if (ok && marker) vgiPendingLayer.removeLayer(marker);
+  return ok;
 }
 
 /* ===========================================================================
