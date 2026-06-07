@@ -9,6 +9,7 @@ desktop.ini
 # Skedare te perkohshme
 *.tmp
 *.log
+*.bak
 test.txt
 
 # QGIS
