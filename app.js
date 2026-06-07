@@ -313,13 +313,39 @@ function choroColor(n) {
   return n > 30 ? '#7f1d1d' : n > 15 ? '#b91c1c' : n > 8 ? '#ef4444' :
          n > 3 ? '#fb923c' : n > 0 ? '#fde68a' : '#f1f5f9';
 }
+// Fsheh/shfaq pikat (banka/atm/transfer) sipas checkbox-eve perkatese
+function setPointsVisible(visible) {
+  [['lyrBank', clusterBank], ['lyrAtm', clusterAtm], ['lyrTransfer', clusterTransfer]].forEach(([id, cl]) => {
+    if (visible) { if (document.getElementById(id).checked) map.addLayer(cl); }
+    else map.removeLayer(cl);
+  });
+}
+// Etiketat me emrin e komunes ne qender te secilit poligon
+let komLabelLayer = L.layerGroup();
+function showKomLabels(show) {
+  komLabelLayer.clearLayers();
+  if (!show) { map.removeLayer(komLabelLayer); return; }
+  komLayer.eachLayer(l => {
+    if (!l.feature) return;
+    const center = l.getBounds().getCenter();
+    L.marker(center, {
+      interactive: false, keyboard: false,
+      icon: L.divIcon({ className: 'kom-label', html: `<span>${l.feature.properties.name}</span>`, iconSize: [0, 0] })
+    }).addTo(komLabelLayer);
+  });
+  map.addLayer(komLabelLayer);
+}
 document.getElementById('symbByCount').addEventListener('change', e => {
   STATE.choropleth = e.target.checked;
   if (e.target.checked) {
     komLayer.setStyle(f => ({ color: '#fff', weight: 1, fillColor: choroColor(f.properties.banka_count), fillOpacity: .75 }));
+    setPointsVisible(false);   // fsheh bankat/atm/transferet
+    showKomLabels(true);       // shfaq emrat e komunave ne qender
     buildChoroLegend();
   } else {
     komLayer.setStyle(komStyle());
+    showKomLabels(false);      // hiq etiketat
+    setPointsVisible(true);    // rikthe pikat (sipas checkbox-eve)
     buildLegend();
   }
 });
