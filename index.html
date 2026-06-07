@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
   <!-- Buton per hapje/mbyllje te panelit ne telefon (responsive - pika 7) -->
@@ -57,6 +57,12 @@
         <input type="number" id="bufferRadius" value="500" min="50" step="50" /> <span>m</span>
         <button id="bufferMode">📍 Zgjedh pikën</button>
       </div>
+      <label>Matje distance (klik pika radhazi)</label>
+      <div class="btn-row">
+        <button id="measureMode">📏 Mat distancën</button>
+        <button id="clearAnalysis">🧹 Pastro</button>
+      </div>
+      <label class="checkbox"><input type="checkbox" id="lyrKomClick" checked /> Lejo selektimin e komunave (klik)</label>
       <label class="checkbox"><input type="checkbox" id="symbByCount" /> Ngjyros komunat sipas nr. bankave (choropleth - 6d)</label>
       <p class="hint" id="analysisInfo"></p>
     </section>
@@ -159,6 +165,6 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

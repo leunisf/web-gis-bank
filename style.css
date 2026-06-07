@@ -54,6 +54,13 @@ button.active{background:var(--accent);border-color:#fff;color:#fff}
 .pin-emoji{display:block;line-height:1;text-align:center;
   text-shadow:0 0 2px #fff,0 0 3px #fff,0 0 4px #fff}
 .leg-emoji{font-size:16px;line-height:1;flex:0 0 auto;width:22px;text-align:center}
+
+/* Kur selektimi i komunave eshte i ndaluar, klikimi kalon ne harte (buffer/matje) */
+.no-kom-click .kom-path{pointer-events:none}
+/* Etiketa e distances gjate matjes */
+.measure-tip{background:#0ea5e9;color:#fff;border:none;font-weight:700;
+  box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.measure-tip::before{border-top-color:#0ea5e9}
 .swatch.line{width:18px;height:0;border:none;border-top:3px solid var(--kom);border-radius:0}
 .legend-scale{display:flex;gap:2px;margin-top:4px}
 .legend-scale i{width:22px;height:12px;display:inline-block}

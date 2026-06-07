@@ -96,7 +96,7 @@ function buildMarkers(features, kind, cluster) {
 
 /* ---------------------- Stili & popup i komunave ---------------------- */
 function komStyle() {
-  return { color: CONFIG.colors.kom, weight: 1.5, fillColor: CONFIG.colors.kom, fillOpacity: .05 };
+  return { color: CONFIG.colors.kom, weight: 1.5, fillColor: CONFIG.colors.kom, fillOpacity: .05, className: 'kom-path' };
 }
 function komOnEach(feature, layer) {
   const p = feature.properties;
@@ -307,12 +307,65 @@ function buildChoroLegend() {
   document.getElementById('legend').innerHTML = html;
 }
 
-/* ---------- Klik në hartë (buffer ose VGI) ---------- */
+/* ---------- Matja e distancës (klik radhazi në hartë) ---------- */
+let measureLayer = L.layerGroup().addTo(map);
+const measureBtn = document.getElementById('measureMode');
+measureBtn.addEventListener('click', () => {
+  const on = STATE.mode !== 'measure';
+  setMode(on ? 'measure' : null);
+  measureBtn.classList.toggle('active', on);
+  if (on) { STATE.measurePts = []; measureLayer.clearLayers(); }
+  document.getElementById('analysisInfo').textContent =
+    on ? 'Kliko pikat radhazi për të matur distancën (Pastro për të rifilluar).' : '';
+});
+function fmtDist(m) { return m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`; }
+function runMeasure(latlng) {
+  STATE.measurePts = STATE.measurePts || [];
+  STATE.measurePts.push(latlng);
+  const pts = STATE.measurePts;
+  measureLayer.clearLayers();
+  L.polyline(pts, { color: '#0ea5e9', weight: 3, dashArray: '6 4' }).addTo(measureLayer);
+  let total = 0;
+  pts.forEach((p, i) => {
+    L.circleMarker(p, { radius: 4, color: '#0ea5e9', fillColor: '#fff', fillOpacity: 1, weight: 2 }).addTo(measureLayer);
+    if (i > 0) total += haversine(pts[i - 1].lat, pts[i - 1].lng, p.lat, p.lng);
+  });
+  if (pts.length > 1) {
+    L.tooltip({ permanent: true, direction: 'top', className: 'measure-tip' })
+      .setLatLng(pts[pts.length - 1]).setContent(`Σ ${fmtDist(total)}`).addTo(measureLayer);
+  }
+  document.getElementById('analysisInfo').innerHTML =
+    `Distanca (${pts.length} pika): <b>${fmtDist(total)}</b>. Kliko për të vazhduar.`;
+}
+
+/* ---------- Pastro analizën (buffer + matje) ---------- */
+document.getElementById('clearAnalysis').addEventListener('click', () => {
+  bufferLayer.clearLayers(); measureLayer.clearLayers();
+  STATE.measurePts = []; STATE.lastAnalysis = null;
+  document.getElementById('analysisInfo').textContent = '';
+  setMode(null);
+  bufferBtn.classList.remove('active'); measureBtn.classList.remove('active');
+});
+
+/* ---------- Klik në hartë (buffer / matje / VGI) ---------- */
 map.on('click', e => {
   if (STATE.mode === 'buffer') runBuffer(e.latlng);
+  else if (STATE.mode === 'measure') runMeasure(e.latlng);
   else if (STATE.mode === 'vgi') setVgiPoint(e.latlng);   // Faza 3
 });
-function setMode(m) { STATE.mode = m; map.getContainer().style.cursor = m ? 'crosshair' : ''; }
+function setMode(m) {
+  STATE.mode = m;
+  map.getContainer().style.cursor = m ? 'crosshair' : '';
+  updateKomClickable();
+}
+
+/* ---------- Selektimi i komunave (klik) — mund të ndalohet ---------- */
+function updateKomClickable() {
+  // Komunat klikueshme vetëm nëse checkbox-i lejon DHE s'ka mode aktive (buffer/matje/vgi)
+  const allow = document.getElementById('lyrKomClick').checked && !STATE.mode;
+  map.getContainer().classList.toggle('no-kom-click', !allow);
+}
+document.getElementById('lyrKomClick').addEventListener('change', updateKomClickable);
 
 /* ---------- Shkarkim sipas kriterit (6b) ---------- */
 function currentFeatureCollection() {
