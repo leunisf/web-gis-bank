@@ -48,6 +48,16 @@ button.active{background:var(--accent);border-color:#fff;color:#fff}
 .swatch.bank{background:var(--bank)}
 .swatch.atm{background:var(--atm)}
 .swatch.transfer{background:var(--transfer)}
+
+/* Ikonat e pikave (emoji ne rrethore me ngjyren e llojit) */
+.type-pin{background:none;border:none}
+.pin{display:flex;align-items:center;justify-content:center;width:28px;height:28px;
+  border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.45);
+  font-size:15px;line-height:1}
+.pin-bank{background:var(--bank)}
+.pin-atm{background:var(--atm)}
+.pin-transfer{background:var(--transfer)}
+.pin-sm{width:20px;height:20px;font-size:11px;flex:0 0 auto}
 .swatch.line{width:18px;height:0;border:none;border-top:3px solid var(--kom);border-radius:0}
 .legend-scale{display:flex;gap:2px;margin-top:4px}
 .legend-scale i{width:22px;height:12px;display:inline-block}

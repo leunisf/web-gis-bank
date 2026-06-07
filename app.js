@@ -52,8 +52,14 @@ let bufferLayer = L.layerGroup().addTo(map);   // per analizen (Faza 2)
 function typeLabel(kind) {
   return kind === 'bank' ? 'Bankë' : kind === 'atm' ? 'ATM' : 'Transfer';
 }
-function pointStyle(kind) {
-  return { radius: 6, fillColor: CONFIG.colors[kind], color: '#fff', weight: 1.5, opacity: 1, fillOpacity: .9 };
+// Ikona te ndryshme per cdo lloj (emoji ne nje rrethore me ngjyren e llojit)
+const TYPE_EMOJI = { bank: '🏦', atm: '🏧', transfer: '💱' };
+function typeIcon(kind) {
+  return L.divIcon({
+    className: 'type-pin',
+    html: `<span class="pin pin-${kind}">${TYPE_EMOJI[kind]}</span>`,
+    iconSize: [28, 28], iconAnchor: [14, 14], popupAnchor: [0, -14]
+  });
 }
 
 // Ndertimi i popup-it per nje pike (pa "Marka" ne detaje)
@@ -68,9 +74,10 @@ function pointPopup(p, kind) {
 // Krijon markerat nga nje liste features dhe i shton ne cluster-in perkates
 function buildMarkers(features, kind, cluster) {
   cluster.clearLayers();
+  const icon = typeIcon(kind);
   features.forEach(f => {
     const c = f.geometry.coordinates;       // [lon,lat]
-    const m = L.circleMarker([c[1], c[0]], pointStyle(kind));
+    const m = L.marker([c[1], c[0]], { icon });
     m.feature = f;
     m.bindPopup(pointPopup(f.properties, kind));
     // Lidh butonin "Raporto" me te dhenat e kesaj pike kur hapet popup-i
@@ -98,9 +105,9 @@ function komOnEach(feature, layer) {
 /* ---------------------- Legjenda / çelësi hartografik ---------------------- */
 function buildLegend() {
   document.getElementById('legend').innerHTML = `
-    <div class="row"><span class="swatch bank"></span> Bankë</div>
-    <div class="row"><span class="swatch atm"></span> ATM</div>
-    <div class="row"><span class="swatch transfer"></span> Transfer (WU, Ria, këmbim...)</div>
+    <div class="row"><span class="pin pin-bank pin-sm">🏦</span> Bankë</div>
+    <div class="row"><span class="pin pin-atm pin-sm">🏧</span> ATM</div>
+    <div class="row"><span class="pin pin-transfer pin-sm">💱</span> Transfer (WU, Ria, këmbim...)</div>
     <div class="row"><span class="swatch line"></span> Kufi komune</div>
     <div class="row" style="margin-top:8px"><small>Në zoom të vogël pikat grupohen (cluster); në zoom të madh shfaqen individualisht.</small></div>`;
 }
