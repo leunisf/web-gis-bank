@@ -31,15 +31,16 @@
       <label>Komuna
         <select id="filterKomuna"><option value="">— Të gjitha —</option></select>
       </label>
+      <label>Lloji
+        <select id="filterLloji">
+          <option value="">— Të gjitha —</option>
+          <option value="bank">Bankë</option>
+          <option value="atm">ATM</option>
+          <option value="transfer">Transfer</option>
+        </select>
+      </label>
       <label>Marka / Banka
         <select id="filterBanka"><option value="">— Të gjitha —</option></select>
-      </label>
-      <label>Kategoria e bankës
-        <select id="filterKategoria">
-          <option value="">— Të gjitha —</option>
-          <option value="njohura">Banka të njohura</option>
-          <option value="tjera">Tjera (status bank)</option>
-        </select>
       </label>
       <div class="btn-row">
         <button id="applyFilter" class="primary">Apliko</button>
@@ -76,7 +77,7 @@
       <p class="hint">Raporto nëse një ATM nuk punon ose ka problem. Kliko <b>“⚠️ Raporto problem”</b> te një pikë në hartë (plotësohet vetë), ose zgjedh këtu.</p>
       <form id="reportForm">
         <label>Lloji
-          <select id="repType"><option value="atm">ATM</option><option value="bank">Bankë</option></select>
+          <select id="repType"><option value="atm">ATM</option><option value="bank">Bankë</option><option value="transfer">Transfer</option></select>
         </label>
         <label>Banka
           <select id="repBanka"><option value="">— Zgjedh bankën —</option></select>
@@ -123,9 +124,10 @@
     <!-- SHTRESAT -->
     <section class="panel">
       <h2>🗂️ Shtresat</h2>
+      <label class="checkbox"><input type="checkbox" id="lyrKom" checked /> Komunat (kufijtë)</label>
       <label class="checkbox"><input type="checkbox" id="lyrBank" checked /> Bankat</label>
       <label class="checkbox"><input type="checkbox" id="lyrAtm" checked /> ATM</label>
-      <label class="checkbox"><input type="checkbox" id="lyrKom" checked /> Kufijtë e komunave</label>
+      <label class="checkbox"><input type="checkbox" id="lyrTransfer" checked /> Transferet (WU, Ria...)</label>
       <label>Sfondi (basemap)
         <select id="basemapSel">
           <option value="osm">OpenStreetMap</option>
