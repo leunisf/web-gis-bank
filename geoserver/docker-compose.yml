@@ -1,0 +1,45 @@
+# ============================================================================
+#  GeoServer + PostGIS  -> publikim WMS/WFS (pikat 9 & 10 te detyres)
+#  Perdorim lokal:   docker compose up -d
+#  GeoServer:        http://localhost:8080/geoserver   (admin / geoserver)
+#  Per cloud (Render/Koyeb/Fly): perdor te njejten imazh GeoServer me Docker.
+# ============================================================================
+services:
+  geoserver:
+    image: kartoza/geoserver:2.25.2
+    container_name: webgis_geoserver
+    ports:
+      - "8080:8080"
+    environment:
+      - GEOSERVER_ADMIN_USER=admin
+      - GEOSERVER_ADMIN_PASSWORD=geoserver
+      - INITIAL_MEMORY=512M
+      - MAXIMUM_MEMORY=1G
+      # CORS: lejon klientin (GitHub Pages) te konsumoje WMS/WFS nga browser-i
+      - CORS_ENABLED=true
+      - CORS_ALLOWED_ORIGINS=*
+    volumes:
+      - geoserver_data:/opt/geoserver/data_dir
+      # Montimi i te dhenave EKZISTUESE (shapefile + geojson) per publikim direkt
+      - ../Shapefiles:/opt/geoserver/data_dir/data/shapefiles:ro
+      - ../data:/opt/geoserver/data_dir/data/geojson:ro
+    depends_on:
+      - postgis
+    restart: unless-stopped
+
+  postgis:
+    image: postgis/postgis:16-3.4
+    container_name: webgis_postgis
+    environment:
+      - POSTGRES_DB=webgis
+      - POSTGRES_USER=webgis
+      - POSTGRES_PASSWORD=webgis_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  geoserver_data:
+  pg_data:

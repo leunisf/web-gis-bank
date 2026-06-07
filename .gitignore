@@ -1,0 +1,19 @@
+# Claude / mjete lokale
+.claude/
+
+# Sistem
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Skedare te perkohshme
+*.tmp
+*.log
+test.txt
+
+# QGIS
+*.qgz~
+*.qgs~
+
+# GeoServer / Docker (vellime lokale)
+geoserver/data_dir/

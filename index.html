@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banka &amp; ATM — Kosovë | Web GIS</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet MarkerCluster (paraqitje multishkallore - pika 5) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Buton per hapje/mbyllje te panelit ne telefon (responsive - pika 7) -->
+  <button id="menuToggle" aria-label="Menu">☰</button>
+
+  <aside id="sidebar">
+    <header class="brand">
+      <h1>🏦 Banka &amp; ATM</h1>
+      <p class="subtitle">Kosovë — Web GIS</p>
+    </header>
+
+    <!-- KERKIM (pika 6c) -->
+    <section class="panel" id="searchPanel">
+      <h2>🔎 Kërkim &amp; Filtër</h2>
+      <input type="text" id="searchText" placeholder="Kërko emër banke / ATM..." />
+      <label>Komuna
+        <select id="filterKomuna"><option value="">— Të gjitha —</option></select>
+      </label>
+      <label>Marka / Banka
+        <select id="filterBanka"><option value="">— Të gjitha —</option></select>
+      </label>
+      <div class="btn-row">
+        <button id="applyFilter" class="primary">Apliko</button>
+        <button id="resetFilter">Pastro</button>
+      </div>
+      <p class="hint" id="resultCount"></p>
+    </section>
+
+    <!-- ANALIZA HAPESINORE (pika 6c) -->
+    <section class="panel" id="analysisPanel">
+      <h2>📐 Analizë hapësinore</h2>
+      <label>Buffer rreth një pike (klik në hartë)</label>
+      <div class="btn-row">
+        <input type="number" id="bufferRadius" value="500" min="50" step="50" /> <span>m</span>
+        <button id="bufferMode">📍 Zgjedh pikën</button>
+      </div>
+      <label class="checkbox"><input type="checkbox" id="symbByCount" /> Ngjyros komunat sipas nr. bankave (choropleth - 6d)</label>
+      <p class="hint" id="analysisInfo"></p>
+    </section>
+
+    <!-- SHKARKIM (pika 6b) -->
+    <section class="panel" id="downloadPanel">
+      <h2>⬇️ Shkarkim</h2>
+      <p class="hint">Shkarko rezultatin aktual (sipas filtrit):</p>
+      <div class="btn-row">
+        <button id="dlGeojson">GeoJSON</button>
+        <button id="dlCsv">CSV</button>
+      </div>
+    </section>
+
+    <!-- VGI / CROWDSOURCING (pika 6a) -->
+    <section class="panel" id="vgiPanel">
+      <h2>➕ Kontribo (VGI)</h2>
+      <p class="hint">Shto një bankë/ATM të re. Kontributi ruhet për moderim.</p>
+      <button id="vgiMode">📌 Shto në hartë</button>
+      <form id="vgiForm" class="hidden">
+        <label>Lloji
+          <select id="vgiType"><option value="bank">Bankë</option><option value="atm">ATM</option></select>
+        </label>
+        <label>Emri / Marka <input type="text" id="vgiName" placeholder="p.sh. NLB Banka" /></label>
+        <p class="hint" id="vgiCoord">Koordinatat: —</p>
+        <div class="btn-row">
+          <button type="submit" class="primary">Ruaj</button>
+          <button type="button" id="vgiCancel">Anulo</button>
+        </div>
+      </form>
+      <p class="hint" id="vgiStatus"></p>
+    </section>
+
+    <!-- SHTRESAT -->
+    <section class="panel">
+      <h2>🗂️ Shtresat</h2>
+      <label class="checkbox"><input type="checkbox" id="lyrBank" checked /> Bankat</label>
+      <label class="checkbox"><input type="checkbox" id="lyrAtm" checked /> ATM</label>
+      <label class="checkbox"><input type="checkbox" id="lyrKom" checked /> Kufijtë e komunave</label>
+      <label>Sfondi (basemap)
+        <select id="basemapSel">
+          <option value="osm">OpenStreetMap</option>
+          <option value="carto">Carto Light</option>
+          <option value="esri">Esri Satelit</option>
+        </select>
+      </label>
+      <hr style="border-color:var(--border);margin:12px 0" />
+      <label class="checkbox"><input type="checkbox" id="lyrWms" /> WMS nga GeoServer (pika 9/10)</label>
+      <div class="btn-row">
+        <button id="wfsTest" title="GetFeature nga WFS">Test WFS</button>
+      </div>
+      <p class="hint" id="wmsStatus">Konfiguro <code>GEOSERVER.url</code> në app.js pasi të nisësh GeoServer.</p>
+    </section>
+
+    <!-- CELESI HARTOGRAFIK / LEGJENDA (pika 5) -->
+    <section class="panel" id="legendPanel">
+      <h2>🗝️ Çelësi hartografik</h2>
+      <div id="legend"></div>
+    </section>
+
+    <footer class="credits">
+      <small>Të dhënat: OpenStreetMap, Komunat (KOSOVAREF01→WGS84).<br/>Detyrë kursi — Web GIS.</small>
+    </footer>
+  </aside>
+
+  <main id="map"></main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
