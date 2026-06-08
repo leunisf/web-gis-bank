@@ -7,7 +7,7 @@
 #    - largohen "bankat" e dyshimta (pa marke / emra te gabuar / mikrofinanca)
 #    - mbahen vetem: BANKA kryesore + ATM + TRANSFERE (Western Union, Ria, etj.)
 #  Dalje:
-#    - 1 shapefile baze: Shapefiles/Projekti/banka_atm_kosove.{shp,shx,dbf,prj,cpg}
+#    - 1 shapefile baze: Shapefiles/Shapefile_Baze/banka_atm_kosove.{shp,shx,dbf,prj,cpg}
 #      (fusha: osm_id, fclass[bank|atm|transfer], name, banka, komuna)
 #    - GeoJSON per app: data/bankat.geojson, data/atm.geojson, data/transferet.geojson
 # ============================================================================
@@ -257,7 +257,7 @@ $dbfW.Flush()
 $prj='GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]]'
 [System.IO.File]::WriteAllText((Join-Path $projDir "banka_atm_kosove.prj"),$prj,[System.Text.ASCIIEncoding]::new())
 [System.IO.File]::WriteAllText((Join-Path $projDir "banka_atm_kosove.cpg"),"UTF-8",[System.Text.ASCIIEncoding]::new())
-Write-Host "   -> Shapefiles/Projekti/banka_atm_kosove.* ($n pika)"
+Write-Host "   -> Shapefiles/Shapefile_Baze/banka_atm_kosove.* ($n pika)"
 
 # ============================================================================
 #  4) GeoJSON per app

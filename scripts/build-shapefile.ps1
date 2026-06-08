@@ -1,14 +1,14 @@
 # ============================================================================
 #  Ndertimi i NJE shapefile baze nga 3 GeoJSON-et e pastruar:
 #    data/bankat.geojson + data/atm.geojson + data/transferet.geojson
-#  -> Shapefiles/Projekti/banka_atm_transfer.{shp,shx,dbf,prj,cpg}
+#  -> Shapefiles/Shapefile_Baze/banka_atm_transfer.{shp,shx,dbf,prj,cpg}
 #  Fusha: osm_id, fclass (bank|atm|transfer), name, banka, komuna. WGS84/UTF-8.
 #  Vetem ASCII ne skript. Te dhenat lexohen nga JSON (s'ka klasifikim/riprojektim).
 # ============================================================================
 $ErrorActionPreference="Stop"
 $root=Split-Path -Parent $PSScriptRoot
 $out=Join-Path $root "data"
-$projDir=Join-Path $root "Shapefiles/Projekti"
+$projDir=Join-Path $root "Shapefiles/Shapefile_Baze"
 if(-not (Test-Path $projDir)){ New-Item -ItemType Directory -Path $projDir | Out-Null }
 $enc=[System.Text.Encoding]::UTF8
 
@@ -101,5 +101,5 @@ $prj='GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298
 $nb=($feats|Where-Object{$_.fclass -eq 'bank'}).Count
 $na=($feats|Where-Object{$_.fclass -eq 'atm'}).Count
 $nt=($feats|Where-Object{$_.fclass -eq 'transfer'}).Count
-Write-Host "PERFUNDOI. Shapefiles/Projekti/banka_atm_transfer.shp"
+Write-Host "PERFUNDOI. Shapefiles/Shapefile_Baze/banka_atm_transfer.shp"
 Write-Host ("   bank={0}, atm={1}, transfer={2}, GJITHSEJ={3}" -f $nb,$na,$nt,$n)
