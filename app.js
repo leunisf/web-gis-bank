@@ -519,12 +519,41 @@ function setPointsVisible(visible) {
 }
 // Etiketat me emrin e komunes ne qender te secilit poligon
 let komLabelLayer = L.layerGroup();
+// Centroid (qender mase) i unazes me te madhe — bie BRENDA poligonit, ndryshe nga
+// qendra e bounding-box-it qe mund te bjere mbi nje komune fqinje (p.sh. Viti mbi Kllokot).
+function ringCentroid(ring) {
+  let a = 0, cx = 0, cy = 0;
+  for (let i = 0, n = ring.length - 1; i < n; i++) {
+    const [x0, y0] = ring[i], [x1, y1] = ring[i + 1];
+    const cross = x0 * y1 - x1 * y0;
+    a += cross; cx += (x0 + x1) * cross; cy += (y0 + y1) * cross;
+  }
+  if (Math.abs(a) < 1e-12) {                       // unaze e degjeneruar -> mesatare e thjeshte
+    const m = ring.reduce((s, p) => [s[0] + p[0], s[1] + p[1]], [0, 0]);
+    return [m[1] / ring.length, m[0] / ring.length];
+  }
+  a *= 0.5;
+  return [cy / (6 * a), cx / (6 * a)];             // [lat, lon] per Leaflet
+}
+function komLabelPoint(feature) {
+  const g = feature.geometry;
+  const polys = g.type === 'MultiPolygon' ? g.coordinates : [g.coordinates];
+  let best = null, bestArea = -1;
+  polys.forEach(poly => {                          // zgjedh unazen e jashtme me siperfaqen me te madhe
+    const ring = poly[0];
+    let area = 0;
+    for (let i = 0, n = ring.length - 1; i < n; i++) area += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+    area = Math.abs(area);
+    if (area > bestArea) { bestArea = area; best = ring; }
+  });
+  return best ? ringCentroid(best) : null;
+}
 function showKomLabels(show) {
   komLabelLayer.clearLayers();
   if (!show) { map.removeLayer(komLabelLayer); return; }
   komLayer.eachLayer(l => {
     if (!l.feature) return;
-    const center = l.getBounds().getCenter();
+    const center = komLabelPoint(l.feature) || l.getBounds().getCenter();
     L.marker(center, {
       interactive: false, keyboard: false,
       icon: L.divIcon({ className: 'kom-label', html: `<span>${l.feature.properties.name}</span>`, iconSize: [0, 0] })
