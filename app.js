@@ -877,7 +877,7 @@ async function deleteContribution(c, marker) {
 const GEOSERVER = {
   url: '',                 // p.sh. 'http://localhost:8080/geoserver'  (bosh = çaktivizuar)
   workspace: 'webgis',
-  wmsLayers: 'webgis:komunat,webgis:bankat,webgis:atm'
+  wmsLayers: 'webgis:banka_atm_transfer'
 };
 let wmsLayer = null;
 let wfsLayer = L.layerGroup();
