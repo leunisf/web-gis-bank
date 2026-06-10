@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=11" />
 </head>
 <body>
   <!-- Buton per hapje/mbyllje te panelit ne telefon (responsive - pika 7) -->
@@ -20,57 +20,59 @@
 
   <aside id="sidebar">
     <header class="brand">
-      <h1>🏦 Banka &amp; ATM</h1>
-      <p class="subtitle">Kosovë — Web GIS</p>
+      <!-- Buton i ndrrimit te gjuhes (shfaq gjuhen ne te cilen kalon) -->
+      <button id="langToggle" title="Language / Gjuha">EN</button>
+      <h1 data-i18n="brand_h1">🏦 Banka &amp; ATM</h1>
+      <p class="subtitle" data-i18n="subtitle">Kosovë — Web GIS</p>
     </header>
 
     <!-- KERKIM (pika 6c) -->
     <section class="panel" id="searchPanel">
-      <h2>🔎 Kërkim &amp; Filtër</h2>
-      <input type="text" id="searchText" placeholder="Kërko emër banke / ATM..." />
-      <label>Komuna
-        <select id="filterKomuna"><option value="">— Të gjitha —</option></select>
+      <h2 data-i18n="search_h2">🔎 Kërkim &amp; Filtër</h2>
+      <input type="text" id="searchText" data-i18n-ph="search_ph" placeholder="Kërko emër banke / ATM..." />
+      <label><span data-i18n="lbl_komuna">Komuna</span>
+        <select id="filterKomuna"><option value="" data-i18n="opt_all">— Të gjitha —</option></select>
       </label>
-      <label>Lloji
+      <label><span data-i18n="lbl_lloji">Lloji</span>
         <select id="filterLloji">
-          <option value="">— Të gjitha —</option>
-          <option value="bank">Bankë</option>
-          <option value="atm">ATM</option>
-          <option value="transfer">Transfer</option>
+          <option value="" data-i18n="opt_all">— Të gjitha —</option>
+          <option value="bank" data-i18n="opt_bank">Bankë</option>
+          <option value="atm" data-i18n="opt_atm">ATM</option>
+          <option value="transfer" data-i18n="opt_transfer">Transfer</option>
         </select>
       </label>
-      <label>Marka / Banka
-        <select id="filterBanka"><option value="">— Të gjitha —</option></select>
+      <label><span data-i18n="lbl_marka">Marka / Banka</span>
+        <select id="filterBanka"><option value="" data-i18n="opt_all">— Të gjitha —</option></select>
       </label>
       <div class="btn-row">
-        <button id="applyFilter" class="primary">Apliko</button>
-        <button id="resetFilter">Pastro</button>
+        <button id="applyFilter" class="primary" data-i18n="btn_apply">Apliko</button>
+        <button id="resetFilter" data-i18n="btn_reset">Pastro</button>
       </div>
       <p class="hint" id="resultCount"></p>
     </section>
 
     <!-- ANALIZA HAPESINORE (pika 6c) -->
     <section class="panel" id="analysisPanel">
-      <h2>📐 Analizë hapësinore</h2>
-      <label>Buffer rreth një pike (klik në hartë)</label>
+      <h2 data-i18n="analysis_h2">📐 Analizë hapësinore</h2>
+      <label data-i18n="lbl_buffer">Buffer rreth një pike (klik në hartë)</label>
       <div class="btn-row">
         <input type="number" id="bufferRadius" value="500" min="50" step="50" /> <span>m</span>
-        <button id="bufferMode">📍 Zgjedh pikën</button>
+        <button id="bufferMode" data-i18n="btn_buffer">📍 Zgjedh pikën</button>
       </div>
-      <label>Matje distance (klik pika radhazi)</label>
+      <label data-i18n="lbl_measure">Matje distance (klik pika radhazi)</label>
       <div class="btn-row">
-        <button id="measureMode">📏 Mat distancën</button>
-        <button id="clearAnalysis">🧹 Pastro</button>
+        <button id="measureMode" data-i18n="btn_measure">📏 Mat distancën</button>
+        <button id="clearAnalysis" data-i18n="btn_clear">🧹 Pastro</button>
       </div>
-      <label class="checkbox"><input type="checkbox" id="lyrKomClick" checked /> Lejo selektimin e komunave (klik)</label>
-      <label class="checkbox"><input type="checkbox" id="symbByCount" /> Ngjyros komunat sipas nr. bankave (choropleth - 6d)</label>
+      <label class="checkbox"><input type="checkbox" id="lyrKomClick" checked /> <span data-i18n="chk_komclick">Lejo selektimin e komunave (klik)</span></label>
+      <label class="checkbox"><input type="checkbox" id="symbByCount" /> <span data-i18n="chk_choro">Ngjyros komunat sipas nr. bankave (choropleth - 6d)</span></label>
       <p class="hint" id="analysisInfo"></p>
     </section>
 
     <!-- SHKARKIM (pika 6b) -->
     <section class="panel" id="downloadPanel">
-      <h2>⬇️ Shkarkim</h2>
-      <p class="hint">Shkarko rezultatin aktual (sipas filtrit):</p>
+      <h2 data-i18n="dl_h2">⬇️ Shkarkim</h2>
+      <p class="hint" data-i18n="dl_hint">Shkarko rezultatin aktual (sipas filtrit):</p>
       <div class="btn-row">
         <button id="dlGeojson">GeoJSON</button>
         <button id="dlCsv">CSV</button>
@@ -79,30 +81,30 @@
 
     <!-- RAPORTIM (ATM nuk punon, etj.) -->
     <section class="panel" id="reportPanel">
-      <h2>⚠️ Raporto problem</h2>
-      <p class="hint">Raporto nëse një ATM nuk punon ose ka problem. Kliko <b>“⚠️ Raporto problem”</b> te një pikë në hartë (plotësohet vetë), ose zgjedh këtu.</p>
+      <h2 data-i18n="rep_h2">⚠️ Raporto problem</h2>
+      <p class="hint" data-i18n-html="rep_hint">Raporto nëse një ATM nuk punon ose ka problem. Kliko <b>“⚠️ Raporto problem”</b> te një pikë në hartë (plotësohet vetë), ose zgjedh këtu.</p>
       <form id="reportForm">
-        <label>Lloji
-          <select id="repType"><option value="atm">ATM</option><option value="bank">Bankë</option><option value="transfer">Transfer</option></select>
+        <label><span data-i18n="lbl_lloji">Lloji</span>
+          <select id="repType"><option value="atm" data-i18n="opt_atm">ATM</option><option value="bank" data-i18n="opt_bank">Bankë</option><option value="transfer" data-i18n="opt_transfer">Transfer</option></select>
         </label>
-        <label>Banka
-          <select id="repBanka"><option value="">— Zgjedh bankën —</option></select>
+        <label><span data-i18n="lbl_banka">Banka</span>
+          <select id="repBanka"><option value="" data-i18n="opt_choose_bank">— Zgjedh bankën —</option></select>
         </label>
-        <label>Problemi
+        <label><span data-i18n="lbl_problem">Problemi</span>
           <select id="repProblem">
-            <option value="nuk_punon">ATM nuk punon</option>
-            <option value="jashte_sherbimit">Jashtë shërbimit / pa para</option>
-            <option value="vendndodhje_gabim">Vendndodhje e gabuar</option>
-            <option value="mbyllur">E mbyllur / s'ekziston më</option>
-            <option value="tjeter">Tjetër</option>
+            <option value="nuk_punon" data-i18n="rep_p_nuk">ATM nuk punon</option>
+            <option value="jashte_sherbimit" data-i18n="rep_p_jashte">Jashtë shërbimit / pa para</option>
+            <option value="vendndodhje_gabim" data-i18n="rep_p_vend">Vendndodhje e gabuar</option>
+            <option value="mbyllur" data-i18n="rep_p_mbyllur">E mbyllur / s'ekziston më</option>
+            <option value="tjeter" data-i18n="rep_p_tjeter">Tjetër</option>
           </select>
         </label>
-        <label>Përshkrim / koment
-          <textarea id="repKoment" rows="3" placeholder="Përshkruaj problemin..."></textarea>
+        <label><span data-i18n="lbl_pershkrim">Përshkrim / koment</span>
+          <textarea id="repKoment" rows="3" data-i18n-ph="rep_ph" placeholder="Përshkruaj problemin..."></textarea>
         </label>
-        <p class="hint" id="repCoord">Pika: —</p>
+        <p class="hint" id="repCoord" data-i18n="rep_coord_empty">Pika: —</p>
         <div class="btn-row">
-          <button type="submit" class="primary">Dërgo raportin</button>
+          <button type="submit" class="primary" data-i18n="btn_send_report">Dërgo raportin</button>
         </div>
       </form>
       <p class="hint" id="repStatus"></p>
@@ -110,18 +112,18 @@
 
     <!-- VGI / CROWDSOURCING (pika 6a) -->
     <section class="panel" id="vgiPanel">
-      <h2>➕ Kontribo (VGI)</h2>
-      <p class="hint">Shto një bankë/ATM të re. Kontributi ruhet për moderim.</p>
-      <button id="vgiMode">📌 Shto në hartë</button>
+      <h2 data-i18n="vgi_h2">➕ Kontribo (VGI)</h2>
+      <p class="hint" data-i18n="vgi_hint">Shto një bankë/ATM të re. Kontributi ruhet për moderim.</p>
+      <button id="vgiMode" data-i18n="btn_vgi_add">📌 Shto në hartë</button>
       <form id="vgiForm" class="hidden">
-        <label>Lloji
-          <select id="vgiType"><option value="bank">Bankë</option><option value="atm">ATM</option></select>
+        <label><span data-i18n="lbl_lloji">Lloji</span>
+          <select id="vgiType"><option value="bank" data-i18n="opt_bank">Bankë</option><option value="atm" data-i18n="opt_atm">ATM</option></select>
         </label>
-        <label>Emri / Marka <input type="text" id="vgiName" placeholder="p.sh. NLB Banka" /></label>
-        <p class="hint" id="vgiCoord">Koordinatat: —</p>
+        <label><span data-i18n="lbl_emri">Emri / Marka</span> <input type="text" id="vgiName" data-i18n-ph="vgi_ph" placeholder="p.sh. NLB Banka" /></label>
+        <p class="hint" id="vgiCoord" data-i18n="vgi_coord_empty">Koordinatat: —</p>
         <div class="btn-row">
-          <button type="submit" class="primary">Ruaj</button>
-          <button type="button" id="vgiCancel">Anulo</button>
+          <button type="submit" class="primary" data-i18n="btn_save">Ruaj</button>
+          <button type="button" id="vgiCancel" data-i18n="btn_cancel">Anulo</button>
         </div>
       </form>
       <p class="hint" id="vgiStatus"></p>
@@ -129,34 +131,34 @@
 
     <!-- SHTRESAT -->
     <section class="panel">
-      <h2>🗂️ Shtresat</h2>
-      <label class="checkbox"><input type="checkbox" id="lyrKom" checked /> Komunat (kufijtë)</label>
-      <label class="checkbox"><input type="checkbox" id="lyrBank" checked /> Bankat</label>
-      <label class="checkbox"><input type="checkbox" id="lyrAtm" checked /> ATM</label>
-      <label class="checkbox"><input type="checkbox" id="lyrTransfer" checked /> Transferet (WU, Ria...)</label>
-      <label>Sfondi (basemap)
+      <h2 data-i18n="layers_h2">🗂️ Shtresat</h2>
+      <label class="checkbox"><input type="checkbox" id="lyrKom" checked /> <span data-i18n="chk_kom">Komunat (kufijtë)</span></label>
+      <label class="checkbox"><input type="checkbox" id="lyrBank" checked /> <span data-i18n="chk_bank">Bankat</span></label>
+      <label class="checkbox"><input type="checkbox" id="lyrAtm" checked /> <span data-i18n="chk_atm">ATM</span></label>
+      <label class="checkbox"><input type="checkbox" id="lyrTransfer" checked /> <span data-i18n="chk_transfer">Transferet (WU, Ria...)</span></label>
+      <label><span data-i18n="lbl_basemap">Sfondi (basemap)</span>
         <select id="basemapSel">
           <option value="osm">OpenStreetMap</option>
           <option value="carto">Carto Light</option>
-          <option value="esri">Esri Satelit</option>
+          <option value="esri" data-i18n="opt_esri">Esri Satelit</option>
         </select>
       </label>
       <hr style="border-color:var(--border);margin:12px 0" />
-      <label class="checkbox"><input type="checkbox" id="lyrWms" /> WMS nga GeoServer (pika 9/10)</label>
+      <label class="checkbox"><input type="checkbox" id="lyrWms" /> <span data-i18n="chk_wms">WMS nga GeoServer (pika 9/10)</span></label>
       <div class="btn-row">
         <button id="wfsTest" title="GetFeature nga WFS">Test WFS</button>
       </div>
-      <p class="hint" id="wmsStatus">Konfiguro <code>GEOSERVER.url</code> në app.js pasi të nisësh GeoServer.</p>
+      <p class="hint" id="wmsStatus" data-i18n-html="wms_status_default">Konfiguro <code>GEOSERVER.url</code> në app.js pasi të nisësh GeoServer.</p>
     </section>
 
     <!-- CELESI HARTOGRAFIK / LEGJENDA (pika 5) -->
     <section class="panel" id="legendPanel">
-      <h2>🗝️ Çelësi hartografik</h2>
+      <h2 data-i18n="legend_h2">🗝️ Çelësi hartografik</h2>
       <div id="legend"></div>
     </section>
 
     <footer class="credits">
-      <small>Të dhënat: OpenStreetMap, Komunat (KOSOVAREF01→WGS84).<br/>Detyrë kursi — Web GIS.</small>
+      <small data-i18n-html="credits">Të dhënat: OpenStreetMap, Komunat (KOSOVAREF01→WGS84).<br/>Detyrë kursi — Web GIS.</small>
     </footer>
   </aside>
 
@@ -165,6 +167,6 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

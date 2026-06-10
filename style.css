@@ -16,6 +16,13 @@ body{display:flex;overflow:hidden}
 .brand{padding:18px 16px;background:linear-gradient(135deg,#1e3a8a,#2563eb);position:sticky;top:0;z-index:5}
 .brand h1{margin:0;font-size:20px}
 .subtitle{margin:2px 0 0;font-size:12px;color:#dbeafe}
+/* Buton i ndrrimit te gjuhes (SQ/EN) */
+#langToggle{
+  position:absolute;top:14px;right:14px;z-index:6;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.55);
+  font-weight:700;font-size:13px;letter-spacing:.5px;padding:5px 11px;border-radius:7px;
+}
+#langToggle:hover{background:rgba(255,255,255,.3)}
 
 .panel{background:var(--panel);margin:10px;padding:12px 14px;border-radius:10px;border:1px solid var(--border)}
 .panel h2{margin:0 0 10px;font-size:14px;font-weight:600;color:#cbd5e1}

@@ -11,6 +11,170 @@ const CONFIG = {
   data: { bank: 'data/bankat.geojson', atm: 'data/atm.geojson', transfer: 'data/transferet.geojson', kom: 'data/komunat.geojson' }
 };
 
+/* ===========================================================================
+   PERKTHIMI / I18N — Shqip (sq) & Anglisht (en)
+   Butoni #langToggle ne header e ndron gjuhen; zgjedhja ruhet ne localStorage.
+   Tekstet statike vijne nga atributet data-i18n / data-i18n-html / data-i18n-ph
+   ne index.html; tekstet dinamike thirren me t('celesi', ...args).
+   =========================================================================== */
+const I18N = {
+  sq: {
+    doc_title: 'Banka & ATM — Kosovë | Web GIS',
+    brand_h1: '🏦 Banka & ATM', subtitle: 'Kosovë — Web GIS',
+    search_h2: '🔎 Kërkim & Filtër', search_ph: 'Kërko emër banke / ATM...',
+    lbl_komuna: 'Komuna', opt_all: '— Të gjitha —', lbl_lloji: 'Lloji',
+    opt_bank: 'Bankë', opt_atm: 'ATM', opt_transfer: 'Transfer',
+    lbl_marka: 'Marka / Banka', btn_apply: 'Apliko', btn_reset: 'Pastro',
+    analysis_h2: '📐 Analizë hapësinore',
+    lbl_buffer: 'Buffer rreth një pike (klik në hartë)', btn_buffer: '📍 Zgjedh pikën',
+    lbl_measure: 'Matje distance (klik pika radhazi)', btn_measure: '📏 Mat distancën', btn_clear: '🧹 Pastro',
+    chk_komclick: 'Lejo selektimin e komunave (klik)',
+    chk_choro: 'Ngjyros komunat sipas nr. bankave (choropleth - 6d)',
+    dl_h2: '⬇️ Shkarkim', dl_hint: 'Shkarko rezultatin aktual (sipas filtrit):',
+    rep_h2: '⚠️ Raporto problem',
+    rep_hint: 'Raporto nëse një ATM nuk punon ose ka problem. Kliko <b>“⚠️ Raporto problem”</b> te një pikë në hartë (plotësohet vetë), ose zgjedh këtu.',
+    lbl_banka: 'Banka', opt_choose_bank: '— Zgjedh bankën —', lbl_problem: 'Problemi',
+    rep_p_nuk: 'ATM nuk punon', rep_p_jashte: 'Jashtë shërbimit / pa para',
+    rep_p_vend: 'Vendndodhje e gabuar', rep_p_mbyllur: "E mbyllur / s'ekziston më", rep_p_tjeter: 'Tjetër',
+    lbl_pershkrim: 'Përshkrim / koment', rep_ph: 'Përshkruaj problemin...',
+    rep_coord_empty: 'Pika: —', btn_send_report: 'Dërgo raportin',
+    vgi_h2: '➕ Kontribo (VGI)', vgi_hint: 'Shto një bankë/ATM të re. Kontributi ruhet për moderim.',
+    btn_vgi_add: '📌 Shto në hartë', lbl_emri: 'Emri / Marka', vgi_ph: 'p.sh. NLB Banka',
+    vgi_coord_empty: 'Koordinatat: —', btn_save: 'Ruaj', btn_cancel: 'Anulo',
+    layers_h2: '🗂️ Shtresat', chk_kom: 'Komunat (kufijtë)', chk_bank: 'Bankat',
+    chk_atm: 'ATM', chk_transfer: 'Transferet (WU, Ria...)', lbl_basemap: 'Sfondi (basemap)',
+    opt_esri: 'Esri Satelit', chk_wms: 'WMS nga GeoServer (pika 9/10)',
+    wms_status_default: 'Konfiguro <code>GEOSERVER.url</code> në app.js pasi të nisësh GeoServer.',
+    legend_h2: '🗝️ Çelësi hartografik',
+    credits: 'Të dhënat: OpenStreetMap, Komunat (KOSOVAREF01→WGS84).<br>Detyrë kursi — Web GIS.',
+    // --- Tekste dinamike ---
+    type_bank: 'Bankë', type_atm: 'ATM', type_transfer: 'Transfer',
+    pop_lloji: 'Lloji:', pop_komuna: 'Komuna:', pop_banka: 'Banka:', pop_atm: 'ATM:',
+    pop_histori: 'Historiku', pop_report_btn: '⚠️ Raporto problem',
+    legend_bank: 'Bankë', legend_atm: 'ATM', legend_transfer: 'Transfer (WU, Ria, këmbim...)',
+    legend_kom: 'Kufi komune',
+    legend_note: 'Në zoom të vogël pikat grupohen (cluster); në zoom të madh shfaqen individualisht.',
+    result_count: (nb, na, nt) => `Shfaqen: ${nb} banka, ${na} ATM, ${nt} transfere (gjithsej ${nb + na + nt}).`,
+    err_load: 'Gabim në ngarkimin e të dhënave. Hape aplikacionin përmes një serveri (jo file://).',
+    buffer_prompt: 'Kliko në hartë për qendrën e buffer-it.',
+    buffer_result: (r, nb, na, nt) => `Brenda <b>${r} m</b>: <b>${nb}</b> banka, <b>${na}</b> ATM, <b>${nt}</b> transfere.`,
+    measure_prompt: 'Kliko pikat radhazi për të matur distancën (Pastro për të rifilluar).',
+    measure_result: (n, d) => `Distanca (${n} pika): <b>${d}</b>. Kliko për të vazhduar.`,
+    choro_title: 'Banka për komunë',
+    report_ok: '✅ Faleminderit! Raporti u dërgua.',
+    report_local: '⚠️ U ruajt lokalisht (Supabase reports jo i konfiguruar).',
+    rep_coord_full: (name, lat, lon) => `Pika: ${name || '—'} (${lat}, ${lon})`,
+    rep_coord_pick: 'Pika: — (zgjedh nga harta)',
+    vgi_prompt: 'Kliko në hartë për vendndodhjen.',
+    vgi_pick_first: 'Zgjedh fillimisht një pikë në hartë.',
+    vgi_ok: '✅ Faleminderit! Kontributi u ruajt për moderim.',
+    vgi_local: '⚠️ U ruajt lokalisht (Supabase jo i konfiguruar).',
+    vgi_coord: (lat, lon) => `Koordinatat: ${lat}, ${lon}`,
+    vgi_pending_tag: '(propozim/pending)', vgi_marka: 'Marka:', vgi_del_btn: '🗑️ Fshi këtë pikë',
+    vgi_del_confirm: 'Të fshihet kjo pikë e shtuar?', vgi_deleted: '🗑️ Pika u fshi.',
+    vgi_del_fail: "⚠️ S'u fshi dot online (kërkohet leja në Supabase). U hoq nga ruajtja lokale nëse ekzistonte.",
+    wms_empty: '⚠️ GEOSERVER.url është bosh. Nise GeoServer dhe vendos URL-në në app.js.',
+    wms_loaded: '✅ Shtresa WMS u ngarkua nga GeoServer.',
+    wfs_empty: '⚠️ Vendos GEOSERVER.url në app.js.',
+    wfs_ok: (n) => `✅ WFS: u morën ${n} objekte nga GeoServer.`,
+    wfs_fail: (e) => '⚠️ WFS dështoi (kontrollo URL/CORS): ' + e
+  },
+  en: {
+    doc_title: 'Banks & ATMs — Kosovo | Web GIS',
+    brand_h1: '🏦 Banks & ATMs', subtitle: 'Kosovo — Web GIS',
+    search_h2: '🔎 Search & Filter', search_ph: 'Search bank / ATM name...',
+    lbl_komuna: 'Municipality', opt_all: '— All —', lbl_lloji: 'Type',
+    opt_bank: 'Bank', opt_atm: 'ATM', opt_transfer: 'Transfer',
+    lbl_marka: 'Brand / Bank', btn_apply: 'Apply', btn_reset: 'Clear',
+    analysis_h2: '📐 Spatial analysis',
+    lbl_buffer: 'Buffer around a point (click on map)', btn_buffer: '📍 Pick point',
+    lbl_measure: 'Distance measurement (click points in sequence)', btn_measure: '📏 Measure distance', btn_clear: '🧹 Clear',
+    chk_komclick: 'Allow selecting municipalities (click)',
+    chk_choro: 'Color municipalities by bank count (choropleth - 6d)',
+    dl_h2: '⬇️ Download', dl_hint: 'Download the current result (per filter):',
+    rep_h2: '⚠️ Report a problem',
+    rep_hint: 'Report if an ATM is out of order or has an issue. Click <b>“⚠️ Report a problem”</b> on a map point (auto-filled), or choose here.',
+    lbl_banka: 'Bank', opt_choose_bank: '— Choose bank —', lbl_problem: 'Problem',
+    rep_p_nuk: 'ATM not working', rep_p_jashte: 'Out of service / no cash',
+    rep_p_vend: 'Wrong location', rep_p_mbyllur: "Closed / no longer exists", rep_p_tjeter: 'Other',
+    lbl_pershkrim: 'Description / comment', rep_ph: 'Describe the problem...',
+    rep_coord_empty: 'Point: —', btn_send_report: 'Send report',
+    vgi_h2: '➕ Contribute (VGI)', vgi_hint: 'Add a new bank/ATM. The contribution is saved for moderation.',
+    btn_vgi_add: '📌 Add on map', lbl_emri: 'Name / Brand', vgi_ph: 'e.g. NLB Banka',
+    vgi_coord_empty: 'Coordinates: —', btn_save: 'Save', btn_cancel: 'Cancel',
+    layers_h2: '🗂️ Layers', chk_kom: 'Municipalities (borders)', chk_bank: 'Banks',
+    chk_atm: 'ATMs', chk_transfer: 'Transfers (WU, Ria...)', lbl_basemap: 'Background (basemap)',
+    opt_esri: 'Esri Satellite', chk_wms: 'WMS from GeoServer (point 9/10)',
+    wms_status_default: 'Configure <code>GEOSERVER.url</code> in app.js after starting GeoServer.',
+    legend_h2: '🗝️ Map legend',
+    credits: 'Data: OpenStreetMap, Municipalities (KOSOVAREF01→WGS84).<br>Course project — Web GIS.',
+    // --- Dynamic text ---
+    type_bank: 'Bank', type_atm: 'ATM', type_transfer: 'Transfer',
+    pop_lloji: 'Type:', pop_komuna: 'Municipality:', pop_banka: 'Banks:', pop_atm: 'ATMs:',
+    pop_histori: 'History', pop_report_btn: '⚠️ Report a problem',
+    legend_bank: 'Bank', legend_atm: 'ATM', legend_transfer: 'Transfer (WU, Ria, exchange...)',
+    legend_kom: 'Municipality border',
+    legend_note: 'At low zoom points are grouped (cluster); at high zoom they show individually.',
+    result_count: (nb, na, nt) => `Showing: ${nb} banks, ${na} ATMs, ${nt} transfers (total ${nb + na + nt}).`,
+    err_load: 'Error loading data. Open the app through a server (not file://).',
+    buffer_prompt: 'Click on the map for the buffer center.',
+    buffer_result: (r, nb, na, nt) => `Within <b>${r} m</b>: <b>${nb}</b> banks, <b>${na}</b> ATMs, <b>${nt}</b> transfers.`,
+    measure_prompt: 'Click points in sequence to measure distance (Clear to restart).',
+    measure_result: (n, d) => `Distance (${n} points): <b>${d}</b>. Click to continue.`,
+    choro_title: 'Banks per municipality',
+    report_ok: '✅ Thank you! The report was sent.',
+    report_local: '⚠️ Saved locally (Supabase reports not configured).',
+    rep_coord_full: (name, lat, lon) => `Point: ${name || '—'} (${lat}, ${lon})`,
+    rep_coord_pick: 'Point: — (choose from map)',
+    vgi_prompt: 'Click on the map for the location.',
+    vgi_pick_first: 'First choose a point on the map.',
+    vgi_ok: '✅ Thank you! The contribution was saved for moderation.',
+    vgi_local: '⚠️ Saved locally (Supabase not configured).',
+    vgi_coord: (lat, lon) => `Coordinates: ${lat}, ${lon}`,
+    vgi_pending_tag: '(proposal/pending)', vgi_marka: 'Brand:', vgi_del_btn: '🗑️ Delete this point',
+    vgi_del_confirm: 'Delete this added point?', vgi_deleted: '🗑️ Point deleted.',
+    vgi_del_fail: "⚠️ Could not delete online (Supabase permission required). Removed from local storage if it existed.",
+    wms_empty: '⚠️ GEOSERVER.url is empty. Start GeoServer and set the URL in app.js.',
+    wms_loaded: '✅ WMS layer loaded from GeoServer.',
+    wfs_empty: '⚠️ Set GEOSERVER.url in app.js.',
+    wfs_ok: (n) => `✅ WFS: fetched ${n} features from GeoServer.`,
+    wfs_fail: (e) => '⚠️ WFS failed (check URL/CORS): ' + e
+  }
+};
+let LANG = localStorage.getItem('lang') || 'sq';
+// Perkthen nje celes; nese vlera eshte funksion, e thirr me argumentet e dhena.
+function t(key, ...args) {
+  const v = (I18N[LANG] || {})[key] ?? I18N.sq[key] ?? key;
+  return typeof v === 'function' ? v(...args) : v;
+}
+// Vendos tekstet statike ne DOM sipas atributeve data-i18n*.
+function applyStaticI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'))); });
+}
+// Ri-lidh popup-et e komunave me gjuhen aktuale.
+function rebindKomPopups() {
+  if (komLayer) komLayer.eachLayer(l => { if (l.feature) komOnEach(l.feature, l); });
+}
+// Ndron gjuhen, ruan zgjedhjen dhe rifreskon te gjitha tekstet (statike + dinamike).
+function setLang(lang) {
+  LANG = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang;
+  document.title = t('doc_title');
+  applyStaticI18n();
+  const btn = document.getElementById('langToggle');
+  if (btn) btn.textContent = lang === 'sq' ? 'EN' : 'SQ';   // shfaq gjuhen ne te cilen kalon
+  if (STATE.raw.bank) {                                     // rifresko vetem pasi jane ngarkuar te dhenat
+    refreshPoints(STATE.filtered.bank, STATE.filtered.atm, STATE.filtered.transfer);
+    rebindKomPopups();
+    if (STATE.choropleth) buildChoroLegend(); else buildLegend();
+    renderPending();
+  }
+}
+document.getElementById('langToggle').addEventListener('click', () => setLang(LANG === 'sq' ? 'en' : 'sq'));
+
 // Gjendja globale e aplikacionit
 const STATE = {
   raw: { bank: null, atm: null, transfer: null, kom: null },   // FeatureCollection origjinale
@@ -48,9 +212,9 @@ const clusterTransfer = L.markerClusterGroup({ maxClusterRadius: 40, disableClus
 let komLayer = null;          // shtresa e komunave (GeoJSON)
 let bufferLayer = L.layerGroup().addTo(map);   // per analizen (Faza 2)
 
-// Etiketa shqip e llojit
+// Etiketa e llojit sipas gjuhes aktuale
 function typeLabel(kind) {
-  return kind === 'bank' ? 'Bankë' : kind === 'atm' ? 'ATM' : 'Transfer';
+  return kind === 'bank' ? t('type_bank') : kind === 'atm' ? t('type_atm') : t('type_transfer');
 }
 // Ikona te ndryshme per cdo lloj (vetem emoji, pa rreth). Banka me e madhe.
 const TYPE_ICON = {
@@ -70,20 +234,48 @@ function typeIcon(kind) {
 // Historiku i shkurtër i bankave (feature shtesë VETËM për bankat).
 // Burimi: njohuri të përgjithshme publike mbi sektorin bankar të Kosovës.
 const HISTORIK = {
-  'Raiffeisen Bank': { viti: '2002', teksti: 'Pjesë e grupit austriak Raiffeisen Bank International. Hyri në Kosovë në 2002 me blerjen e American Bank of Kosovo; sot ndër bankat më të mëdha në vend.' },
-  'ProCredit Bank': { viti: '1999', teksti: 'Themeluar në 1999 si “Micro Enterprise Bank” (MEB) — banka e parë private në Kosovën e pasluftës. U riemërua ProCredit Bank në 2003 (ProCredit Holding, Gjermani).' },
-  'TEB': { viti: '2008', teksti: 'TEB Sh.A. — bankë me kapital turk (TEB, partner i BNP Paribas). Nisi veprimtarinë në Kosovë në vitin 2008.' },
-  'NLB Banka': { viti: '2008', teksti: 'Pjesë e grupit slloven Nova Ljubljanska Banka (NLB); dikur e njohur si NLB Prishtina. Ndër bankat kryesore në treg.' },
-  'BKT': { viti: '2007', teksti: 'Banka Kombëtare Tregtare — banka më e vjetër në Shqipëri (1925). Hapi degën e parë në Kosovë në vitin 2007.' },
-  'Banka Ekonomike': { viti: '2001', teksti: 'Bankë vendore kosovare, e themeluar në 2001; ndër bankat e para me kapital vendor.' },
-  'Banka per Biznes (BPB)': { viti: '2001', teksti: 'Banka për Biznes — bankë vendore kosovare e themeluar në 2001, e fokusuar te ndërmarrjet dhe bizneset.' },
-  'Credins Bank': { viti: '2003', teksti: 'Bankë me origjinë shqiptare (themeluar në Shqipëri më 2003); zgjeroi veprimtarinë në Kosovë vitet e fundit.' },
-  'Ziraat Bank': { viti: '1863', teksti: 'Türkiye Cumhuriyeti Ziraat Bankası — bankë shtetërore turke me histori që nga 1863; vepron me degë në Kosovë.' },
-  'Isbank': { viti: '1924', teksti: 'Türkiye İş Bankası — bankë turke e themeluar në 1924; e pranishme në Kosovë me degë.' },
-  'Banka Qendrore': { viti: '2008', teksti: 'Banka Qendrore e Republikës së Kosovës (BQK) — autoriteti monetar i vendit, e themeluar në 2008, pasardhëse e Autoritetit Qendror Bankar.' },
-  'Komercijalna Banka': { viti: '', teksti: 'Bankë me kapital serb që vepron kryesisht në komunat me shumicë serbe në veri të Kosovës.' },
-  'Postanska Stedionica': { viti: '', teksti: 'Banka Poštanska štedionica (kapital serb), vepron kryesisht në komunat veriore me shumicë serbe.' },
-  'Narodna Banka': { viti: '', teksti: 'Degë e sistemit bankar serb, e pranishme në komunat veriore me shumicë serbe.' }
+  'Raiffeisen Bank': { viti: '2002',
+    sq: 'Pjesë e grupit austriak Raiffeisen Bank International. Hyri në Kosovë në 2002 me blerjen e American Bank of Kosovo; sot ndër bankat më të mëdha në vend.',
+    en: 'Part of the Austrian group Raiffeisen Bank International. Entered Kosovo in 2002 by acquiring American Bank of Kosovo; today one of the largest banks in the country.' },
+  'ProCredit Bank': { viti: '1999',
+    sq: 'Themeluar në 1999 si “Micro Enterprise Bank” (MEB) — banka e parë private në Kosovën e pasluftës. U riemërua ProCredit Bank në 2003 (ProCredit Holding, Gjermani).',
+    en: 'Founded in 1999 as “Micro Enterprise Bank” (MEB) — the first private bank in post-war Kosovo. Renamed ProCredit Bank in 2003 (ProCredit Holding, Germany).' },
+  'TEB': { viti: '2008',
+    sq: 'TEB Sh.A. — bankë me kapital turk (TEB, partner i BNP Paribas). Nisi veprimtarinë në Kosovë në vitin 2008.',
+    en: 'TEB Sh.A. — a bank with Turkish capital (TEB, partner of BNP Paribas). Started operating in Kosovo in 2008.' },
+  'NLB Banka': { viti: '2008',
+    sq: 'Pjesë e grupit slloven Nova Ljubljanska Banka (NLB); dikur e njohur si NLB Prishtina. Ndër bankat kryesore në treg.',
+    en: 'Part of the Slovenian group Nova Ljubljanska Banka (NLB); formerly known as NLB Prishtina. One of the leading banks on the market.' },
+  'BKT': { viti: '2007',
+    sq: 'Banka Kombëtare Tregtare — banka më e vjetër në Shqipëri (1925). Hapi degën e parë në Kosovë në vitin 2007.',
+    en: 'Banka Kombëtare Tregtare (National Commercial Bank) — the oldest bank in Albania (1925). Opened its first branch in Kosovo in 2007.' },
+  'Banka Ekonomike': { viti: '2001',
+    sq: 'Bankë vendore kosovare, e themeluar në 2001; ndër bankat e para me kapital vendor.',
+    en: 'A local Kosovar bank, founded in 2001; among the first banks with domestic capital.' },
+  'Banka per Biznes (BPB)': { viti: '2001',
+    sq: 'Banka për Biznes — bankë vendore kosovare e themeluar në 2001, e fokusuar te ndërmarrjet dhe bizneset.',
+    en: 'Banka për Biznes (Bank for Business) — a local Kosovar bank founded in 2001, focused on enterprises and businesses.' },
+  'Credins Bank': { viti: '2003',
+    sq: 'Bankë me origjinë shqiptare (themeluar në Shqipëri më 2003); zgjeroi veprimtarinë në Kosovë vitet e fundit.',
+    en: 'A bank of Albanian origin (founded in Albania in 2003); expanded its operations into Kosovo in recent years.' },
+  'Ziraat Bank': { viti: '1863',
+    sq: 'Türkiye Cumhuriyeti Ziraat Bankası — bankë shtetërore turke me histori që nga 1863; vepron me degë në Kosovë.',
+    en: 'Türkiye Cumhuriyeti Ziraat Bankası — a Turkish state bank with a history dating to 1863; operates branches in Kosovo.' },
+  'Isbank': { viti: '1924',
+    sq: 'Türkiye İş Bankası — bankë turke e themeluar në 1924; e pranishme në Kosovë me degë.',
+    en: 'Türkiye İş Bankası — a Turkish bank founded in 1924; present in Kosovo with branches.' },
+  'Banka Qendrore': { viti: '2008',
+    sq: 'Banka Qendrore e Republikës së Kosovës (BQK) — autoriteti monetar i vendit, e themeluar në 2008, pasardhëse e Autoritetit Qendror Bankar.',
+    en: 'Central Bank of the Republic of Kosovo (CBK) — the country’s monetary authority, established in 2008, successor of the Central Banking Authority.' },
+  'Komercijalna Banka': { viti: '',
+    sq: 'Bankë me kapital serb që vepron kryesisht në komunat me shumicë serbe në veri të Kosovës.',
+    en: 'A bank with Serbian capital operating mainly in Serbian-majority municipalities in northern Kosovo.' },
+  'Postanska Stedionica': { viti: '',
+    sq: 'Banka Poštanska štedionica (kapital serb), vepron kryesisht në komunat veriore me shumicë serbe.',
+    en: 'Banka Poštanska štedionica (Serbian capital), operating mainly in northern Serbian-majority municipalities.' },
+  'Narodna Banka': { viti: '',
+    sq: 'Degë e sistemit bankar serb, e pranishme në komunat veriore me shumicë serbe.',
+    en: 'A branch of the Serbian banking system, present in northern Serbian-majority municipalities.' }
 };
 
 // Ndertimi i popup-it per nje pike (pa "Marka" ne detaje)
@@ -92,12 +284,12 @@ function pointPopup(p, kind) {
   let extra = '';
   if (kind === 'bank') {                       // historiku — feature vetëm për bankat
     const h = HISTORIK[p.banka];
-    if (h) extra = `<div class="histori"><b>ℹ️ Historiku${h.viti ? ' (' + h.viti + ')' : ''}:</b> ${h.teksti}</div>`;
+    if (h) extra = `<div class="histori"><b>ℹ️ ${t('pop_histori')}${h.viti ? ' (' + h.viti + ')' : ''}:</b> ${h[LANG] || h.sq}</div>`;
   }
   return `<b>${p.name || tip}</b><br>
-          <small>Lloji:</small> ${tip}<br>
-          <small>Komuna:</small> ${p.komuna || '—'}${extra}
-          <div style="margin-top:6px"><button type="button" class="report-btn">⚠️ Raporto problem</button></div>`;
+          <small>${t('pop_lloji')}</small> ${tip}<br>
+          <small>${t('pop_komuna')}</small> ${p.komuna || '—'}${extra}
+          <div style="margin-top:6px"><button type="button" class="report-btn">${t('pop_report_btn')}</button></div>`;
 }
 
 // Krijon markerat nga nje liste features dhe i shton ne cluster-in perkates
@@ -130,7 +322,7 @@ function komBaseStyle(feature) {
 }
 function komOnEach(feature, layer) {
   const p = feature.properties;
-  layer.bindPopup(`<b>${p.name}</b><br><small>Banka:</small> ${p.banka_count} &nbsp; <small>ATM:</small> ${p.atm_count}`);
+  layer.bindPopup(`<b>${p.name}</b><br><small>${t('pop_banka')}</small> ${p.banka_count} &nbsp; <small>${t('pop_atm')}</small> ${p.atm_count}`);
   layer.on({
     mouseover: e => e.target.setStyle({ weight: 3, fillOpacity: STATE.choropleth ? .9 : .25 }),
     // Kthe gjithmonë në stilin bazë (rregullon mbetjen e hijezimit gjatë choropleth-it)
@@ -141,11 +333,11 @@ function komOnEach(feature, layer) {
 /* ---------------------- Legjenda / çelësi hartografik ---------------------- */
 function buildLegend() {
   document.getElementById('legend').innerHTML = `
-    <div class="row"><span class="leg-emoji" style="font-size:20px">🏦</span> Bankë</div>
-    <div class="row"><span class="leg-emoji">🏧</span> ATM</div>
-    <div class="row"><span class="leg-emoji">💱</span> Transfer (WU, Ria, këmbim...)</div>
-    <div class="row"><span class="swatch line"></span> Kufi komune</div>
-    <div class="row" style="margin-top:8px"><small>Në zoom të vogël pikat grupohen (cluster); në zoom të madh shfaqen individualisht.</small></div>`;
+    <div class="row"><span class="leg-emoji" style="font-size:20px">🏦</span> ${t('legend_bank')}</div>
+    <div class="row"><span class="leg-emoji">🏧</span> ${t('legend_atm')}</div>
+    <div class="row"><span class="leg-emoji">💱</span> ${t('legend_transfer')}</div>
+    <div class="row"><span class="swatch line"></span> ${t('legend_kom')}</div>
+    <div class="row" style="margin-top:8px"><small>${t('legend_note')}</small></div>`;
 }
 
 /* ---------------------- Ngarkimi i të dhënave ---------------------- */
@@ -170,7 +362,7 @@ async function loadData() {
     buildLegend();
     map.fitBounds(komLayer.getBounds(), { padding: [10, 10] });
   } catch (err) {
-    alert('Gabim në ngarkimin e të dhënave. Hape aplikacionin përmes një serveri (jo file://).\n\n' + err);
+    alert(t('err_load') + '\n\n' + err);
     console.error(err);
   }
 }
@@ -191,8 +383,7 @@ function refreshPoints(bankFeatures, atmFeatures, transferFeatures) {
 
 function updateResultCount() {
   const nb = STATE.filtered.bank.length, na = STATE.filtered.atm.length, nt = STATE.filtered.transfer.length;
-  document.getElementById('resultCount').textContent =
-    `Shfaqen: ${nb} banka, ${na} ATM, ${nt} transfere (gjithsej ${nb + na + nt}).`;
+  document.getElementById('resultCount').textContent = t('result_count', nb, na, nt);
 }
 
 /* ---------------------- Kontrolli i shtresave ---------------------- */
@@ -282,7 +473,7 @@ bufferBtn.addEventListener('click', () => {
   setMode(STATE.mode === 'buffer' ? null : 'buffer');
   bufferBtn.classList.toggle('active', STATE.mode === 'buffer');
   document.getElementById('analysisInfo').textContent =
-    STATE.mode === 'buffer' ? 'Kliko në hartë për qendrën e buffer-it.' : '';
+    STATE.mode === 'buffer' ? t('buffer_prompt') : '';
 });
 function runBuffer(latlng) {
   const radius = parseFloat(document.getElementById('bufferRadius').value) || 500;
@@ -310,8 +501,7 @@ function runBuffer(latlng) {
     const c = f.geometry.coordinates;
     L.circleMarker([c[1], c[0]], { radius: 8, color: '#ef4444', weight: 2, fill: false }).addTo(bufferLayer);
   });
-  document.getElementById('analysisInfo').innerHTML =
-    `Brenda <b>${radius} m</b>: <b>${nb}</b> banka, <b>${na}</b> ATM, <b>${nt}</b> transfere.`;
+  document.getElementById('analysisInfo').innerHTML = t('buffer_result', radius, nb, na, nt);
   STATE.lastAnalysis = within;   // perdoret per shkarkim
 }
 
@@ -358,7 +548,7 @@ document.getElementById('symbByCount').addEventListener('change', e => {
 });
 function buildChoroLegend() {
   const grades = [0, 1, 4, 9, 16, 31], labels = ['0', '1–3', '4–8', '9–15', '16–30', '>30'];
-  let html = '<div class="row"><b>Banka për komunë</b></div><div class="legend-scale">';
+  let html = `<div class="row"><b>${t('choro_title')}</b></div><div class="legend-scale">`;
   grades.forEach((g, i) => html += `<i style="background:${choroColor(g === 0 ? 0 : g)}" title="${labels[i]}"></i>`);
   html += '</div><div class="row"><small>' + labels.join(' · ') + '</small></div>';
   document.getElementById('legend').innerHTML = html;
@@ -372,8 +562,7 @@ measureBtn.addEventListener('click', () => {
   setMode(on ? 'measure' : null);
   measureBtn.classList.toggle('active', on);
   if (on) { STATE.measurePts = []; measureLayer.clearLayers(); }
-  document.getElementById('analysisInfo').textContent =
-    on ? 'Kliko pikat radhazi për të matur distancën (Pastro për të rifilluar).' : '';
+  document.getElementById('analysisInfo').textContent = on ? t('measure_prompt') : '';
 });
 function fmtDist(m) { return m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`; }
 function runMeasure(latlng) {
@@ -391,8 +580,7 @@ function runMeasure(latlng) {
     L.tooltip({ permanent: true, direction: 'top', className: 'measure-tip' })
       .setLatLng(pts[pts.length - 1]).setContent(`Σ ${fmtDist(total)}`).addTo(measureLayer);
   }
-  document.getElementById('analysisInfo').innerHTML =
-    `Distanca (${pts.length} pika): <b>${fmtDist(total)}</b>. Kliko për të vazhduar.`;
+  document.getElementById('analysisInfo').innerHTML = t('measure_result', pts.length, fmtDist(total));
 }
 
 /* ---------- Pastro analizën (buffer + matje) ---------- */
@@ -466,7 +654,7 @@ function openReport(p, coords) {
   } else { repSel.value = ''; }
   STATE.reportPoint = coords ? { lon: coords[0], lat: coords[1], name: p.name, osm_id: p.osm_id } : null;
   document.getElementById('repCoord').textContent = coords
-    ? `Pika: ${p.name || '—'} (${coords[1].toFixed(5)}, ${coords[0].toFixed(5)})` : 'Pika: — (zgjedh nga harta)';
+    ? t('rep_coord_full', p.name, coords[1].toFixed(5), coords[0].toFixed(5)) : t('rep_coord_pick');
   document.getElementById('reportPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
   document.getElementById('sidebar').classList.add('open');
   document.getElementById('repKoment').focus();
@@ -486,12 +674,10 @@ document.getElementById('reportForm').addEventListener('submit', async e => {
     status:  'pending'
   };
   const ok = await saveReport(report);
-  document.getElementById('repStatus').textContent = ok
-    ? '✅ Faleminderit! Raporti u dërgua.'
-    : '⚠️ U ruajt lokalisht (Supabase reports jo i konfiguruar).';
+  document.getElementById('repStatus').textContent = ok ? t('report_ok') : t('report_local');
   document.getElementById('reportForm').reset();
   STATE.reportPoint = null;
-  document.getElementById('repCoord').textContent = 'Pika: —';
+  document.getElementById('repCoord').textContent = t('rep_coord_empty');
 });
 
 async function saveReport(r) {
@@ -529,14 +715,14 @@ vgiBtn.addEventListener('click', () => {
   setMode(on ? 'vgi' : null);
   vgiBtn.classList.toggle('active', on);
   document.getElementById('vgiForm').classList.toggle('hidden', !on);
-  document.getElementById('vgiStatus').textContent = on ? 'Kliko në hartë për vendndodhjen.' : '';
+  document.getElementById('vgiStatus').textContent = on ? t('vgi_prompt') : '';
 });
 function setVgiPoint(latlng) {
   vgiPoint = latlng;
   vgiPendingLayer.clearLayers();
   L.marker(latlng).addTo(vgiPendingLayer);
   document.getElementById('vgiCoord').textContent =
-    `Koordinatat: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`;
+    t('vgi_coord', latlng.lat.toFixed(5), latlng.lng.toFixed(5));
 }
 document.getElementById('vgiCancel').addEventListener('click', () => {
   document.getElementById('vgiForm').classList.add('hidden');
@@ -545,7 +731,7 @@ document.getElementById('vgiCancel').addEventListener('click', () => {
 
 document.getElementById('vgiForm').addEventListener('submit', async e => {
   e.preventDefault();
-  if (!vgiPoint) { alert('Zgjedh fillimisht një pikë në hartë.'); return; }
+  if (!vgiPoint) { alert(t('vgi_pick_first')); return; }
   const contrib = {
     fclass: document.getElementById('vgiType').value,
     name: document.getElementById('vgiName').value.trim() || '(pa emër)',
@@ -554,9 +740,7 @@ document.getElementById('vgiForm').addEventListener('submit', async e => {
     status: 'pending'                 // editim i KUFIZUAR: pret moderim nga prodhuesi
   };
   const ok = await saveContribution(contrib);
-  document.getElementById('vgiStatus').textContent = ok
-    ? '✅ Faleminderit! Kontributi u ruajt për moderim.'
-    : '⚠️ U ruajt lokalisht (Supabase jo i konfiguruar).';
+  document.getElementById('vgiStatus').textContent = ok ? t('vgi_ok') : t('vgi_local');
   document.getElementById('vgiForm').reset();
   document.getElementById('vgiForm').classList.add('hidden');
   vgiBtn.classList.remove('active'); setMode(null); vgiPoint = null;
@@ -608,16 +792,14 @@ async function renderPending() {
   list.forEach(c => {
     const icon = L.divIcon({ className: '', html: '📌', iconSize: [20, 20] });
     const m = L.marker([c.lat, c.lon], { icon }).addTo(vgiPendingLayer);
-    m.bindPopup(`<b>${c.name}</b> <small>(propozim/pending)</small><br>Lloji: ${c.fclass}<br>Marka: ${c.banka || '—'}
-      <div style="margin-top:6px"><button type="button" class="del-vgi">🗑️ Fshi këtë pikë</button></div>`);
+    m.bindPopup(`<b>${c.name}</b> <small>${t('vgi_pending_tag')}</small><br>${t('pop_lloji')} ${c.fclass}<br>${t('vgi_marka')} ${c.banka || '—'}
+      <div style="margin-top:6px"><button type="button" class="del-vgi">${t('vgi_del_btn')}</button></div>`);
     m.on('popupopen', e => {
       const btn = e.popup.getElement().querySelector('.del-vgi');
       if (btn) btn.onclick = async () => {
-        if (!confirm('Të fshihet kjo pikë e shtuar?')) return;
+        if (!confirm(t('vgi_del_confirm'))) return;
         const ok = await deleteContribution(c, m);
-        document.getElementById('vgiStatus').textContent = ok
-          ? '🗑️ Pika u fshi.'
-          : '⚠️ S\'u fshi dot online (kërkohet leja në Supabase). U hoq nga ruajtja lokale nëse ekzistonte.';
+        document.getElementById('vgiStatus').textContent = ok ? t('vgi_deleted') : t('vgi_del_fail');
       };
     });
   });
@@ -658,15 +840,14 @@ let wfsLayer = L.layerGroup();
 document.getElementById('lyrWms').addEventListener('change', e => {
   if (!GEOSERVER.url) {
     e.target.checked = false;
-    document.getElementById('wmsStatus').textContent =
-      '⚠️ GEOSERVER.url është bosh. Nise GeoServer dhe vendos URL-në në app.js.';
+    document.getElementById('wmsStatus').textContent = t('wms_empty');
     return;
   }
   if (e.target.checked) {
     wmsLayer = L.tileLayer.wms(`${GEOSERVER.url}/${GEOSERVER.workspace}/wms`, {
       layers: GEOSERVER.wmsLayers, format: 'image/png', transparent: true, version: '1.3.0'
     }).addTo(map);
-    document.getElementById('wmsStatus').textContent = '✅ Shtresa WMS u ngarkua nga GeoServer.';
+    document.getElementById('wmsStatus').textContent = t('wms_loaded');
   } else if (wmsLayer) {
     map.removeLayer(wmsLayer);
   }
@@ -674,7 +855,7 @@ document.getElementById('lyrWms').addEventListener('change', e => {
 
 // Test WFS: merr bankat si GeoJSON nga WFS-i ynë dhe i vizato (deshmon pikën 10)
 document.getElementById('wfsTest').addEventListener('click', async () => {
-  if (!GEOSERVER.url) { document.getElementById('wmsStatus').textContent = '⚠️ Vendos GEOSERVER.url në app.js.'; return; }
+  if (!GEOSERVER.url) { document.getElementById('wmsStatus').textContent = t('wfs_empty'); return; }
   const u = `${GEOSERVER.url}/${GEOSERVER.workspace}/wfs?service=WFS&version=2.0.0&request=GetFeature` +
             `&typeNames=${GEOSERVER.workspace}:bankat&outputFormat=application/json&srsName=EPSG:4326`;
   try {
@@ -682,10 +863,16 @@ document.getElementById('wfsTest').addEventListener('click', async () => {
     wfsLayer.clearLayers();
     L.geoJSON(gj, { pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 7, color: '#a21caf', fillOpacity: .8 }) }).addTo(wfsLayer);
     wfsLayer.addTo(map);
-    document.getElementById('wmsStatus').textContent = `✅ WFS: u morën ${gj.features.length} objekte nga GeoServer.`;
+    document.getElementById('wmsStatus').textContent = t('wfs_ok', gj.features.length);
   } catch (err) {
-    document.getElementById('wmsStatus').textContent = '⚠️ WFS dështoi (kontrollo URL/CORS): ' + err;
+    document.getElementById('wmsStatus').textContent = t('wfs_fail', err);
   }
 });
+
+// Vendos gjuhen fillestare (statike) menjehere; rifreskimi dinamik behet pas ngarkimit.
+document.documentElement.lang = LANG;
+document.title = t('doc_title');
+applyStaticI18n();
+document.getElementById('langToggle').textContent = LANG === 'sq' ? 'EN' : 'SQ';
 
 loadData().then(renderPending);
