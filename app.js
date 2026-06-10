@@ -278,7 +278,21 @@ const HISTORIK = {
     en: 'A branch of the Serbian banking system, present in northern Serbian-majority municipalities.' }
 };
 
-// Ndertimi i popup-it per nje pike (pa "Marka" ne detaje)
+// Logot e markave (skedare lokale ne ./logos). Çelesi = vlera e fushes 'banka'.
+// Markat pa logo (E panjohur, Kembimore, Postanska, Komercijalna...) bien te emri pa imazh.
+const BRAND_LOGO = {
+  'Ria / Capital': 'ria', 'Raiffeisen Bank': 'raiffeisen', 'TEB': 'teb', 'NLB Banka': 'nlb',
+  'ProCredit Bank': 'procredit', 'Banka Ekonomike': 'ekonomike', 'BKT': 'bkt',
+  'Banka per Biznes (BPB)': 'bpb', 'Western Union': 'wu', 'Ziraat Bank': 'ziraat',
+  'Credins Bank': 'credins', 'Isbank': 'isbank', 'MoneyGram': 'moneygram',
+  'Banka Qendrore': 'bqk', 'Narodna Banka': 'narodna'
+};
+function brandLogo(banka) {
+  const s = BRAND_LOGO[banka];
+  return s ? `logos/${s}.png` : null;
+}
+
+// Ndertimi i popup-it per nje pike (logo e markes ngjitur emrit lart)
 function pointPopup(p, kind) {
   const tip = typeLabel(kind);
   let extra = '';
@@ -286,7 +300,9 @@ function pointPopup(p, kind) {
     const h = HISTORIK[p.banka];
     if (h) extra = `<div class="histori"><b>ℹ️ ${t('pop_histori')}${h.viti ? ' (' + h.viti + ')' : ''}:</b> ${h[LANG] || h.sq}</div>`;
   }
-  return `<b>${p.name || tip}</b><br>
+  const logo = brandLogo(p.banka);
+  const logoImg = logo ? `<img class="popup-logo" src="${logo}" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
+  return `<div class="popup-title">${logoImg}<b>${p.name || tip}</b></div>
           <small>${t('pop_lloji')}</small> ${tip}<br>
           <small>${t('pop_komuna')}</small> ${p.komuna || '—'}${extra}
           <div style="margin-top:6px"><button type="button" class="report-btn">${t('pop_report_btn')}</button></div>`;
