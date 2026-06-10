@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<title>Dokumentimi — WebGIS Banka, ATM & Transfere — Kosovë</title>
+<style>
+  body{font-family:'Calibri','Segoe UI',sans-serif;font-size:12pt;line-height:1.5;color:#1a1a1a;max-width:820px;margin:0 auto;padding:24px}
+  h1{color:#1e3a8a;font-size:20pt;border-bottom:2px solid #2563eb;padding-bottom:6px}
+  h2{color:#1d4ed8;font-size:15pt;margin-top:26px;border-bottom:1px solid #cbd5e1;padding-bottom:3px}
+  h3{color:#2563eb;font-size:13pt;margin-top:18px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:11pt}
+  th,td{border:1px solid #94a3b8;padding:6px 9px;text-align:left}
+  th{background:#e0e7ff}
+  img{max-width:100%;border:1px solid #cbd5e1;display:block;margin:10px auto}
+  .cap{text-align:center;font-style:italic;font-size:10.5pt;color:#475569;margin-bottom:14px}
+  .center{text-align:center}
+  pre{background:#f1f5f9;border:1px solid #cbd5e1;padding:10px;font-family:'Consolas',monospace;font-size:9.5pt;white-space:pre;overflow:auto}
+  code{background:#f1f5f9;padding:1px 4px;font-family:'Consolas',monospace}
+  ul{margin:6px 0}
+  .titullf{page-break-after:always}
+  .ok{color:#059669;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="titullf center">
+  <p><b>UNIVERSITETI I PRISHTINËS "HASAN PRISHTINA"</b><br>
+  FAKULTETI I INXHINIERISË SË NDËRTIMIT<br>
+  Departamenti i Gjeodezisë</p>
+  <br><br>
+  <h1 style="border:none;display:inline-block">DETYRË</h1>
+  <br><br><br>
+  <p style="font-size:14pt"><b>LËNDA:</b> Web GIS</p>
+  <p style="font-size:14pt"><b>TEMA:</b> Krijimi i një WebGIS-i për Bankat, ATM-të dhe pikat e transferit të parave në Kosovë</p>
+  <br><br><br><br>
+  <table style="width:80%;margin:0 auto;border:none">
+    <tr style="border:none"><td style="border:none">Mentori:<br><b>Prof. Asoc. Dr. Bashkim IDRIZI</b></td>
+    <td style="border:none;text-align:right">Punoi:<br><b>______________________</b></td></tr>
+  </table>
+  <br><br>
+  <p><b>Prishtinë, 2026</b></p>
+</div>
+
+<h2>Përmbajtja</h2>
+<ul>
+<li>Kërkesat e detyrës</li>
+<li>Hyrja</li>
+<li>1. Përzgjedhja e temës dhe territorit; qëllimet, grupet e interesit, shfrytëzimi</li>
+<li>2. Përcaktimi i përmbajtjes gjeografike</li>
+<li>3. Përcaktimi i elementeve matematike</li>
+<li>4. Dizajnimi i arkitekturës së aplikacionit</li>
+<li>5. Krijimi i çelësit hartografik</li>
+<li>6. Elementet redaktuese/ndihmëse dhe funksionet e aplikacionit</li>
+<li>7. Ndërtimi i aplikacionit (web + mobil)</li>
+<li>8. Publikimi / shpërndarja e aplikacionit</li>
+<li>9. Krijimi i web-serviseve (WMS/WFS)</li>
+<li>10. Përdorimi i web-serviseve të krijuara</li>
+<li>Përfundime dhe referenca</li>
+</ul>
+
+<h2>Kërkesat e detyrës</h2>
+<p>Detyra punohet individualisht dhe është kusht për hyrje në provim. Studenti përzgjedh vetë territorin, shkallën, vëllimin dhe temën.</p>
+<ol>
+<li>Përzgjedhja e temës dhe territorit; qëllimet, grupet e interesit, shfrytëzimi</li>
+<li>Përcaktimi i përmbajtjes gjeografike (web-servise/shtresa të hapura + shtresa personale)</li>
+<li>Përcaktimi i elementeve matematike</li>
+<li>Dizajnimi i arkitekturës së aplikacionit</li>
+<li>Krijimi i çelësit hartografik dhe standardeve për paraqitje multishkallore</li>
+<li>Elementet redaktuese/ndihmëse dhe funksionet: a) Crowdsourcing/VGI, b) shkarkim sipas kriterit, c) kërkim/selektim/analizë hapësinore, d) simbolizim sipas kritereve</li>
+<li>Ndërtimi i aplikacionit: a) web, b) mobil</li>
+<li>Publikimi / shpërndarja</li>
+<li>Krijimi i web-serviseve (WMS, WFS)</li>
+<li>Përdorimi i web-serviseve të krijuara</li>
+</ol>
+
+<h2>Hyrja</h2>
+<ul>
+<li>Zhvillimi i teknologjisë së informacionit ka transformuar Sistemet e Informacionit Gjeografik (GIS), duke i bërë hartat interaktive dhe të qasshme përmes internetit. <b>WebGIS-i</b> ndërthur hartat digjitale me teknologjitë web për vizualizim, analizë dhe qasje të lehtë në të dhënat hapësinore.</li>
+<li>Shërbimet financiare — <b>bankat, bankomatet (ATM) dhe pikat e transferit të parave</b> — janë infrastrukturë e përditshme për qytetarët; vendndodhja e tyre është informacion tipik hapësinor që përfiton nga paraqitja në hartë interaktive.</li>
+<li>Ky projekt ndërton një aplikacion WebGIS që paraqet <b>bankat, ATM-të dhe transferet në të gjithë Kosovën</b>, me filtrim, analizë hapësinore, kontribut nga përdoruesit (VGI), raportim problemesh dhe shkarkim të dhënash.</li>
+<li>Teknologjitë: <b>QGIS</b>, përpunim i të dhënave me skripte, <b>GeoJSON</b>, <b>Leaflet</b>, <b>Supabase/PostGIS</b>, <b>GeoServer</b> (WMS/WFS) dhe <b>GitHub Pages</b>.</li>
+<li>Aplikacioni është publik dhe live: <b>https://leunisf.github.io/web-gis-bank/</b></li>
+</ul>
+<img src="img/i18n_sq.png">
+<p class="cap">Figura 1. Pamja e përgjithshme e aplikacionit WebGIS (versioni web).</p>
+
+<h2>1. Përzgjedhja e temës dhe territorit; qëllimet, grupet e interesit dhe shfrytëzimi</h2>
+<p><b>Tema:</b> WebGIS për bankat, ATM-të dhe transferet në Kosovë. <b>Territori:</b> e gjithë Republika e Kosovës, e ndarë në <b>38 komuna</b>.</p>
+<p><b>Pse kjo temë:</b></p>
+<ul>
+<li>Të dhëna reale, me interes të gjerë publik (qytetarë, biznese, turistë).</li>
+<li>Mundëson të gjitha kërkesat e detyrës: shumë pika (gjeometri pikësore), poligone (komunat), analiza hapësinore dhe shërbime web.</li>
+</ul>
+<p><b>Qëllimet:</b></p>
+<ul>
+<li>Vizualizimi i bankave/ATM-ve/transfereve në hartë interaktive.</li>
+<li>Kërkimi dhe filtrimi sipas komunës, llojit dhe markës.</li>
+<li>Analiza hapësinore (buffer, matje distance, dendësi për komunë).</li>
+<li>Kontribut nga përdoruesit dhe raportim i problemeve (p.sh. ATM jashtë shërbimit).</li>
+</ul>
+<p><b>Grupet e interesit:</b></p>
+<ul>
+<li><b>Qytetarët</b> — gjejnë bankën/ATM-në më të afërt dhe raportojnë probleme.</li>
+<li><b>Bankat / institucionet financiare</b> — pasqyrë e shpërndarjes dhe njoftim për probleme.</li>
+<li><b>Studiues/analistë</b> — analiza e mbulimit financiar sipas komunave.</li>
+<li><b>Studentët e GIS-it</b> — shembull praktik i një WebGIS-i të plotë.</li>
+</ul>
+<img src="img/aplikacioni.png">
+<p class="cap">Figura 2. Territori i projektit — shtrirja mbi Kosovën dhe 38 komunat.</p>
+
+<h2>2. Përcaktimi i përmbajtjes gjeografike</h2>
+<p>Të dhënat vijnë nga <b>web-servise/shtresa të hapura</b> dhe nga <b>shtresa personale</b> të përpunuara gjatë projektit.</p>
+<p><b>a) Të dhëna nga shtresa të hapura / web-servise:</b></p>
+<ul>
+<li><b>OpenStreetMap (OSM)</b> — harta bazë (tiles) dhe pikat e shërbimeve financiare.</li>
+<li><b>HOTOSM (Humanitarian OSM Team)</b> — eksport <i>financial services points</i> për Kosovën (704 pika).</li>
+<li><b>Basemaps:</b> OpenStreetMap, Carto Light dhe Esri Satellite (XYZ tiles).</li>
+</ul>
+<p><b>b) Shtresa personale (të përpunuara):</b></p>
+<ul>
+<li><b>Kufijtë e 38 komunave</b> (poligone) — riprojektuar dhe të pastruara.</li>
+<li><b>Shtresa e kombinuar dhe e klasifikuar</b> e pikave, e ndarë në tri lloje:</li>
+</ul>
+<table>
+<tr><th>Lloji</th><th>Numri</th><th>Përshkrim</th></tr>
+<tr><td>🏦 Bankë</td><td>182</td><td>Banka komerciale të licencuara (Raiffeisen, ProCredit, TEB, NLB, BKT, BPB, Banka Ekonomike, etj.)</td></tr>
+<tr><td>🏧 ATM</td><td>166</td><td>Bankomatet</td></tr>
+<tr><td>💱 Transfer</td><td>232</td><td>Western Union, Ria/Capital, MoneyGram, këmbimore, etj.</td></tr>
+<tr><td><b>Gjithsej</b></td><td><b>580</b></td><td></td></tr>
+</table>
+<p><b>Përpunimi i të dhënave (përmbledhje):</b></p>
+<ul>
+<li>Kombinim i të dhënave OSM me eksportin HOTOSM, me <b>heqje dublikatash sipas <code>osm_id</code></b>.</li>
+<li><b>Pastrim</b> i emrave të gabuar/jo-relevantë (p.sh. emra personash, "status bank" por jo banka reale).</li>
+<li><b>Klasifikim</b> automatik në bankë / ATM / transfer sipas etiketave (<code>amenity</code>) dhe markës.</li>
+<li><b>Caktim i komunës</b> për çdo pikë me algoritmin <i>pikë-në-poligon</i> (ray casting).</li>
+</ul>
+<img src="img/v8.png">
+<p class="cap">Figura 3. Përmbajtja gjeografike: tri llojet e pikave mbi territorin e Kosovës.</p>
+
+<h2>3. Përcaktimi i elementeve matematike</h2>
+<p><b>Sistemet koordinative (CRS):</b></p>
+<ul>
+<li>Pikat (banka/ATM/transfer): <b>EPSG:4326 (WGS84)</b> — gjeografik.</li>
+<li>Kufijtë e komunave (burimi): <b>KOSOVAREF01 / Balkans Zone 7 (EPSG:6870/9141)</b> — Transverse Mercator mbi elipsoidin GRS80.</li>
+<li>Paraqitja në web: <b>EPSG:3857 (Web Mercator)</b> — standardi i tiles-ve.</li>
+</ul>
+<p><b>Riprojektimi (komunat 6870 → 4326):</b> u realizua me formulat e <b>inverse Transverse Mercator</b>, me parametrat:</p>
+<ul>
+<li>Meridiani qendror (CM) = <b>21°</b>, faktori i shkallës <b>k₀ = 0.9999</b>, <i>False Easting</i> = <b>7 500 000 m</b>, <i>False Northing</i> = 0, elipsoid <b>GRS80</b>.</li>
+<li>Hapat: gjerësia ndihmëse (<i>footprint latitude</i> φ₁ përmes serisë së harkut meridional), rrezet e kurbaturës <b>N₁</b> dhe <b>R₁</b>, dhe seritë korrigjuese deri në rendin e 6-të/8-të.</li>
+</ul>
+<p><b>Funksione të tjera matematike në aplikacion:</b></p>
+<ul>
+<li><b>Matje distance</b> mbi sferë me formulën <b>haversine</b> (rezultat në m/km).</li>
+<li><b>Pikë-në-poligon</b> (ray casting) për caktimin e komunës.</li>
+<li><b>Shkalla dhe nivelet e zmadhimit</b> (zoom 7–19), me shkallë grafike dinamike poshtë-djathtas.</li>
+</ul>
+<img src="img/v8.png">
+<p class="cap">Figura 4. Elementet matematike: shkalla grafike (poshtë-djathtas) dhe vegla e matjes së distancës.</p>
+
+<h2>4. Dizajnimi i arkitekturës së aplikacionit</h2>
+<p>Arkitektura ndjek modelin klasik me tri nivele (<i>three-tier</i>):</p>
+<pre>
+   NIVELI I TE DHENAVE          NIVELI LOGJIK (server)            NIVELI PREZANTUES
+ +-------------------+      +--------------------------+      +--------------------+
+ |  GeoJSON (statik) |      |  GeoServer  -> WMS / WFS  |      |  Shfletuesi (web)  |
+ |  Shapefile baze   | ---> |  Supabase   -> PostGIS/API| ---> |  Leaflet + HTML/CSS|
+ |  Komunat, pikat   |      |  GitHub Pages -> hosting  |      |  + JavaScript      |
+ +-------------------+      +--------------------------+      +--------------------+
+        Data tier                Logical / middle tier            Presentation tier
+                      HTTP request  &lt;=&gt;  HTTP response (URL/HTTP/HTML/JSON)
+</pre>
+<ul>
+<li><b>Niveli i të dhënave (gjeodatabaza):</b> të dhënat hapësinore në GeoJSON + shapefile bazë, plus databaza online në <b>Supabase (PostGIS)</b> për kontributet dhe raportimet.</li>
+<li><b>Niveli logjik:</b> <b>GeoServer</b> publikon shtresat si web-servise (WMS/WFS); <b>Supabase</b> ofron REST-API mbi PostGIS; <b>GitHub Pages</b> strehon faqen.</li>
+<li><b>Niveli prezantues:</b> harta interaktive <b>Leaflet</b> në HTML/CSS/JavaScript, e qasshme nga kompjuteri dhe telefoni.</li>
+</ul>
+
+<h3>4.1. Përpunimi i të dhënave</h3>
+<p>Të dhënat burimore (OSM/HOTOSM + kufijtë e komunave) u organizuan dhe u kontrolluan në <b>QGIS</b>. Konvertimi/pastrimi (shapefile → GeoJSON, riprojektim, kombinim, klasifikim, caktim komune) u automatizua me <b>skripte</b> të dedikuara, duke prodhuar skedarët: <code>bankat.geojson</code>, <code>atm.geojson</code>, <code>transferet.geojson</code>, <code>komunat.geojson</code>.</p>
+<h3>4.2. Publikimi i të dhënave në GeoServer</h3>
+<p>Krijohet një <b>workspace</b> (<code>webgis</code>), pastaj një <b>store</b> ku ngarkohet shapefile-i bazë. Shtresat <b>publikohen</b> si WMS/WFS me CRS dhe shtrirje të përcaktuar; simbolizimi mund të jepet me <b>SLD</b>.</p>
+<h3>4.3. Paraqitja e hartës (faqja HTML)</h3>
+<p>Faqja kryesore <code>index.html</code> ndërton ndërfaqen; logjika në <code>app.js</code>; stili në <code>style.css</code>. Të dhënat ngarkohen si GeoJSON dhe (opsionalisht) si shtresa <b>WMS</b> nga GeoServer.</p>
+<h3>4.4. Qasja e përdoruesve</h3>
+<p>Aplikacioni publikohet online me <b>GitHub Pages</b> dhe është i qasshëm nga çdo pajisje me shfletues.</p>
+
+<h2>5. Krijimi i çelësit hartografik</h2>
+<ul>
+<li>Çelësi hartografik (legjenda) shpjegon çdo simbol, që harta të jetë e lexueshme për të gjitha grupet e interesit.</li>
+<li>Tri llojet kanë <b>ikona dhe ngjyra të dallueshme</b>, me <b>ikonën e bankës pak më të madhe</b> (pesha vizuale).</li>
+</ul>
+<table>
+<tr><th>Simboli</th><th>Kuptimi</th><th>Ngjyra</th></tr>
+<tr><td>🏦</td><td>Bankë</td><td>blu</td></tr>
+<tr><td>🏧</td><td>ATM</td><td>jeshile</td></tr>
+<tr><td>💱</td><td>Transfer (WU, Ria, këmbim…)</td><td>vjollcë</td></tr>
+<tr><td>▭</td><td>Kufi komune</td><td>portokalli</td></tr>
+</table>
+<ul>
+<li><b>Paraqitje multishkallore (clustering):</b> në zoom të vogël pikat grupohen në <i>clustera</i> me numër; në zoom të madh shfaqen individualisht me ikonën përkatëse.</li>
+<li>Legjenda përditësohet automatikisht edhe kur aktivizohet simbolizimi tematik (choropleth).</li>
+</ul>
+<img src="img/kategorite.png">
+<p class="cap">Figura 5. Çelësi hartografik dhe paraqitja multishkallore (clustering).</p>
+
+<h2>6. Elementet redaktuese/ndihmëse dhe funksionet e aplikacionit</h2>
+<h3>6.1. Crowdsourcing / VGI (editim i kufizuar)</h3>
+<ul>
+<li>Përdoruesi mund të <b>shtojë</b> një bankë/ATM/transfer të re duke klikuar në hartë dhe duke plotësuar formën (lloji, emri/marka).</li>
+<li>Kontributi ruhet si <b>"pending"</b> — pra <b>editim i kufizuar</b>: shfaqet, por <b>moderohet</b> para se të bëhet zyrtar.</li>
+<li>Përdoruesi mund edhe ta <b>fshijë</b> pikën që ka shtuar vetë (buton "🗑️ Fshi këtë pikë").</li>
+<li><b>Raportim problemi:</b> për çdo pikë ekziston butoni "⚠️ Raporto problem", ku zgjidhet lloji (<i>ATM nuk punon, jashtë shërbimit, vendndodhje e gabuar, e mbyllur, tjetër</i>) dhe shkruhet një <b>përshkrim/koment</b>.</li>
+</ul>
+<p>Të dhënat e kontributeve/raportimeve ruhen në <b>databazën Supabase (PostGIS)</b>:</p>
+<table>
+<tr><th>Tabela</th><th>Përmbajtja</th><th>Fushat kryesore</th></tr>
+<tr><td><code>contributions</code></td><td>Pikat e shtuara nga VGI</td><td>fclass, name, banka, lon, lat, geom, status</td></tr>
+<tr><td><code>reports</code></td><td>Raportimet e problemeve</td><td>fclass, banka, problem, koment, lon, lat, status</td></tr>
+</table>
+<p>Gjeometria (<code>geom</code>) gjenerohet automatikisht nga koordinatat me një <b>trigger PostGIS</b>; qasja kontrollohet me <b>RLS</b> (Row Level Security): shtim publik si <i>pending</i>, moderim vetëm nga prodhuesi.</p>
+
+<h3>6.2. Shkarkim i të dhënave sipas kriterit</h3>
+<ul>
+<li>Përdoruesi shkarkon <b>rezultatin aktual</b> (pas filtrit) në dy formate:</li>
+<li><b>GeoJSON</b> — format tekstual i bazuar në JSON për të dhëna hapësinore (pika/linja/poligone + atribute).</li>
+<li><b>CSV</b> — tabelë me lloji, emri, marka, komuna, koordinata.</li>
+</ul>
+
+<h3>6.3. Kërkim, selektim dhe analizë hapësinore</h3>
+<ul>
+<li><b>Kërkim</b> me tekst (emër banke/marke) dhe <b>filtra</b> sipas: <b>Komunës</b>, <b>Llojit</b> (bankë/ATM/transfer) dhe <b>Markës</b>.</li>
+<li><b>Analizë buffer:</b> kliko një pikë dhe një rreze (m) → numërohen sa banka/ATM/transfere bien brenda rrezes.</li>
+<li><b>Matje distance:</b> kliko pika radhazi → vizatohet vija dhe llogaritet distanca kumulative (haversine).</li>
+<li><b>Ndalim i selektimit të komunave</b> për lehtësi gjatë analizave (klikimi kalon në hartë).</li>
+</ul>
+
+<h3>6.4. Simbolizim sipas kritereve të përdoruesit</h3>
+<ul>
+<li><b>Choropleth:</b> me një klik, komunat <b>ngjyrosen sipas numrit të bankave</b> (sa më e errët, aq më shumë), pikat fshihen dhe shfaqet <b>emri i komunës në qendër</b> të secilit poligon.</li>
+<li>Funksioni i kërkesës 6.c (numri/analiza për komunë) lidhet drejtpërdrejt me simbolizimin tematik të 6.d.</li>
+</ul>
+<img src="img/choro.png">
+<p class="cap">Figura 6. Simbolizim tematik (choropleth) sipas numrit të bankave për komunë, me emrat e komunave.</p>
+
+<h2>7. Ndërtimi i aplikacionit</h2>
+<h3>7.1. Versioni për web</h3>
+<ul>
+<li>Ndërfaqe me <b>panel anësor</b> (kërkim/filtra, analiza, shkarkim, raportim, VGI, shtresat, legjenda) dhe <b>hartë</b> kryesore.</li>
+<li><b>Header</b> me titull/identifikim; <b>statusi</b> me sistemin koordinativ, shkallën dhe autorin.</li>
+<li>Vegla standarde: kontroll shtresash, zgjedhje basemap, zoom in/out, shkallë grafike.</li>
+<li><b>Dygjuhësi SQ/EN:</b> butoni në header ndërron gjuhën dhe ruan zgjedhjen.</li>
+</ul>
+<img src="img/i18n_sq.png">
+<p class="cap">Figura 7. Versioni web (shqip).</p>
+<img src="img/i18n_en.png">
+<p class="cap">Figura 8. I njëjti aplikacion në anglisht (ndërrim gjuhe me një klik).</p>
+<h3>7.2. Versioni për mobil</h3>
+<ul>
+<li>Dizajn <b>responsive</b>: paneli kthehet në meny të palosshme (butoni ☰), harta zë tërë ekranin.</li>
+<li>Funksionet kryesore ruhen; mund të vendoset edhe një <b>shortcut</b> në ekranin kryesor të telefonit.</li>
+</ul>
+<img src="img/mobile.png" style="max-width:320px">
+<p class="cap">Figura 9. Versioni për mobil (ndërfaqe e përshtatur, paneli i palosur).</p>
+
+<h2>8. Publikimi / shpërndarja e aplikacionit</h2>
+<ul>
+<li>Kodi ruhet në <b>GitHub</b> (kontroll versioni me Git): krijimi i një <i>repository</i> publik dhe ngarkimi i skedarëve (<code>index.html</code>, <code>app.js</code>, <code>style.css</code>, <code>data/</code>, etj.).</li>
+<li>Aktivizimi i <b>GitHub Pages</b> (dega <code>main</code>, root) gjeneron linkun publik.</li>
+<li><b>Versionim:</b> u shënua një version stabël <b>v1.0</b> (tag + release); për të shmangur cache-in e vjetër përdoret <i>cache-busting</i> (<code>?v=N</code>).</li>
+<li><b>Live:</b> https://leunisf.github.io/web-gis-bank/</li>
+</ul>
+
+<h2>9. Krijimi i web-serviseve (WMS/WFS)</h2>
+<ul>
+<li>Për shpërndarjen e të dhënave te palë të treta përdoret <b>GeoServer</b> (i përgatitur me <code>docker-compose</code>).</li>
+<li>Pas publikimit të shtresave, GeoServer ofron automatikisht:</li>
+<li><b>WMS (Web Map Service)</b> — paraqitje vizuale e hartës si imazh; shtresat shfaqen pa shkarkuar të dhënat origjinale.</li>
+<li><b>WFS (Web Feature Service)</b> — qasje direkte në të dhënat vektoriale dhe atributet (lexim/analizë nga aplikacione të tjera).</li>
+<li>Aplikacioni është <b>i integruar me GeoServer</b>: te paneli i shtresave ka opsionin "WMS nga GeoServer" dhe butonin "Test WFS"; mjafton të vendoset URL-ja (<code>GEOSERVER.url</code>) për t'i aktivizuar live.</li>
+</ul>
+
+<h2>10. Përdorimi i web-serviseve të krijuara</h2>
+<ul>
+<li><b>Brenda aplikacionit web</b> — shtresa WMS shtohet drejtpërdrejt në Leaflet; "Test WFS" merr objektet (GetFeature) nga GeoServer-i.</li>
+<li><b>Në QGIS / softuer të tjerë GIS</b> — duke shtuar lidhje <i>WMS/WMTS</i> ose <i>WFS</i> me URL-në e GeoServer-it, shtresat shfaqen dhe përdoren në kohë reale për analiza.</li>
+</ul>
+
+<h2>Përfundime dhe punë e ardhshme</h2>
+<ul>
+<li>U realizua një <b>WebGIS i plotë</b> për bankat, ATM-të dhe transferet në Kosovë, që plotëson të 10 kërkesat e detyrës.</li>
+<li><b>Punë e ardhshme:</b> vendosja live e GeoServer-it (WMS/WFS realë), pasurim i atributeve të bankave dhe pasqyrë administrative e raportimeve/kontributeve.</li>
+</ul>
+<h3>Plotësimi i kërkesave (përmbledhje)</h3>
+<table>
+<tr><th>#</th><th>Kërkesa</th><th>Statusi</th></tr>
+<tr><td>1</td><td>Temë, territor, qëllime, grupe interesi</td><td class="ok">✔</td></tr>
+<tr><td>2</td><td>Përmbajtja gjeografike (open + personale)</td><td class="ok">✔</td></tr>
+<tr><td>3</td><td>Elementet matematike (CRS/riprojektim)</td><td class="ok">✔</td></tr>
+<tr><td>4</td><td>Arkitektura e aplikacionit</td><td class="ok">✔</td></tr>
+<tr><td>5</td><td>Çelësi hartografik + multishkallë</td><td class="ok">✔</td></tr>
+<tr><td>6a</td><td>Crowdsourcing/VGI + raportim</td><td class="ok">✔</td></tr>
+<tr><td>6b</td><td>Shkarkim (GeoJSON/CSV)</td><td class="ok">✔</td></tr>
+<tr><td>6c</td><td>Kërkim/selektim/analizë (buffer, matje)</td><td class="ok">✔</td></tr>
+<tr><td>6d</td><td>Simbolizim sipas kritereve (choropleth)</td><td class="ok">✔</td></tr>
+<tr><td>7</td><td>Versioni web + mobil</td><td class="ok">✔</td></tr>
+<tr><td>8</td><td>Publikimi (GitHub Pages)</td><td class="ok">✔</td></tr>
+<tr><td>9</td><td>Web-servise WMS/WFS (GeoServer)</td><td class="ok">✔</td></tr>
+<tr><td>10</td><td>Përdorimi i web-serviseve</td><td class="ok">✔</td></tr>
+</table>
+
+<h3>Referenca dhe linqe</h3>
+<ul>
+<li><b>Aplikacioni live:</b> https://leunisf.github.io/web-gis-bank/</li>
+<li><b>Kodi (GitHub):</b> https://github.com/leunisf/web-gis-bank</li>
+<li><b>Të dhënat:</b> OpenStreetMap (openstreetmap.org); HOTOSM Export (export.hotosm.org)</li>
+<li><b>Teknologjitë:</b> Leaflet (leafletjs.com), GeoServer (geoserver.org), Supabase/PostGIS (supabase.com, postgis.net), QGIS (qgis.org)</li>
+</ul>
+
+</body>
+</html>
