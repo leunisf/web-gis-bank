@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
-  <link rel="stylesheet" href="style.css?v=13" />
+  <link rel="stylesheet" href="style.css?v=14" />
 </head>
 <body>
   <!-- Buton per hapje/mbyllje te panelit ne telefon (responsive - pika 7) -->
@@ -143,12 +143,6 @@
           <option value="esri" data-i18n="opt_esri">Esri Satelit</option>
         </select>
       </label>
-      <hr style="border-color:var(--border);margin:12px 0" />
-      <label class="checkbox"><input type="checkbox" id="lyrWms" /> <span data-i18n="chk_wms">WMS nga GeoServer (pika 9/10)</span></label>
-      <div class="btn-row">
-        <button id="wfsTest" title="GetFeature nga WFS">Test WFS</button>
-      </div>
-      <p class="hint" id="wmsStatus" data-i18n-html="wms_status_default">Konfiguro <code>GEOSERVER.url</code> në app.js pasi të nisësh GeoServer.</p>
     </section>
 
     <!-- CELESI HARTOGRAFIK / LEGJENDA (pika 5) -->
@@ -167,6 +161,6 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=14"></script>
 </body>
 </html>

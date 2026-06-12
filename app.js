@@ -870,50 +870,6 @@ async function deleteContribution(c, marker) {
   return ok;
 }
 
-/* ===========================================================================
-   FAZA 4 — Konsumimi i shërbimeve WMS/WFS të GeoServer (pikat 9 & 10)
-   Vendos url-në pasi të nisësh GeoServer (lokal ose cloud).
-   =========================================================================== */
-const GEOSERVER = {
-  url: '',                 // p.sh. 'http://localhost:8080/geoserver'  (bosh = çaktivizuar)
-  workspace: 'webgis',
-  wmsLayers: 'webgis:banka_atm_transfer'
-};
-let wmsLayer = null;
-let wfsLayer = L.layerGroup();
-
-document.getElementById('lyrWms').addEventListener('change', e => {
-  if (!GEOSERVER.url) {
-    e.target.checked = false;
-    document.getElementById('wmsStatus').textContent = t('wms_empty');
-    return;
-  }
-  if (e.target.checked) {
-    wmsLayer = L.tileLayer.wms(`${GEOSERVER.url}/${GEOSERVER.workspace}/wms`, {
-      layers: GEOSERVER.wmsLayers, format: 'image/png', transparent: true, version: '1.3.0'
-    }).addTo(map);
-    document.getElementById('wmsStatus').textContent = t('wms_loaded');
-  } else if (wmsLayer) {
-    map.removeLayer(wmsLayer);
-  }
-});
-
-// Test WFS: merr bankat si GeoJSON nga WFS-i ynë dhe i vizato (deshmon pikën 10)
-document.getElementById('wfsTest').addEventListener('click', async () => {
-  if (!GEOSERVER.url) { document.getElementById('wmsStatus').textContent = t('wfs_empty'); return; }
-  const u = `${GEOSERVER.url}/${GEOSERVER.workspace}/wfs?service=WFS&version=2.0.0&request=GetFeature` +
-            `&typeNames=${GEOSERVER.workspace}:bankat&outputFormat=application/json&srsName=EPSG:4326`;
-  try {
-    const r = await fetch(u); const gj = await r.json();
-    wfsLayer.clearLayers();
-    L.geoJSON(gj, { pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 7, color: '#a21caf', fillOpacity: .8 }) }).addTo(wfsLayer);
-    wfsLayer.addTo(map);
-    document.getElementById('wmsStatus').textContent = t('wfs_ok', gj.features.length);
-  } catch (err) {
-    document.getElementById('wmsStatus').textContent = t('wfs_fail', err);
-  }
-});
-
 // Vendos gjuhen fillestare (statike) menjehere; rifreskimi dinamik behet pas ngarkimit.
 document.documentElement.lang = LANG;
 document.title = t('doc_title');
