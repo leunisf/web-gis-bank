@@ -46,7 +46,7 @@ const I18N = {
     opt_esri: 'Esri Satelit', chk_wms: 'WMS nga GeoServer (pika 9/10)',
     wms_status_default: 'Konfiguro <code>GEOSERVER.url</code> në app.js pasi të nisësh GeoServer.',
     legend_h2: '🗝️ Çelësi hartografik',
-    credits: 'Të dhënat: OpenStreetMap, Komunat (KOSOVAREF01→WGS84).<br>Detyrë kursi — Web GIS.',
+    credits: 'Të dhënat: OpenStreetMap (WGS84).<br>Detyrë kursi — Web GIS.',
     // --- Tekste dinamike ---
     type_bank: 'Bankë', type_atm: 'ATM', type_transfer: 'Transfer',
     pop_lloji: 'Lloji:', pop_komuna: 'Komuna:', pop_banka: 'Banka:', pop_atm: 'ATM:',
@@ -107,7 +107,7 @@ const I18N = {
     opt_esri: 'Esri Satellite', chk_wms: 'WMS from GeoServer (point 9/10)',
     wms_status_default: 'Configure <code>GEOSERVER.url</code> in app.js after starting GeoServer.',
     legend_h2: '🗝️ Map legend',
-    credits: 'Data: OpenStreetMap, Municipalities (KOSOVAREF01→WGS84).<br>Course project — Web GIS.',
+    credits: 'Data: OpenStreetMap (WGS84).<br>Course project — Web GIS.',
     // --- Dynamic text ---
     type_bank: 'Bank', type_atm: 'ATM', type_transfer: 'Transfer',
     pop_lloji: 'Type:', pop_komuna: 'Municipality:', pop_banka: 'Banks:', pop_atm: 'ATMs:',
