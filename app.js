@@ -8,7 +8,7 @@ const CONFIG = {
   center: [42.58, 20.95],
   zoom: 9,
   colors: { bank: '#1d4ed8', atm: '#059669', transfer: '#7c3aed', kom: '#f59e0b' },
-  data: { bank: 'data/bankat.geojson', atm: 'data/atm.geojson', transfer: 'data/transferet.geojson', kom: 'data/komunat.geojson' }
+  data: { bank: 'data/bankat.geojson', atm: 'data/atm.geojson', transfer: 'data/transferet.geojson', kom: 'data/komunat.geojson', kosova: 'data/kosova.geojson' }
 };
 
 /* ===========================================================================
@@ -41,7 +41,7 @@ const I18N = {
     vgi_h2: '➕ Kontribo (VGI)', vgi_hint: 'Shto një bankë/ATM të re. Kontributi ruhet për moderim.',
     btn_vgi_add: '📌 Shto në hartë', lbl_emri: 'Emri / Marka', vgi_ph: 'p.sh. NLB Banka',
     vgi_coord_empty: 'Koordinatat: —', btn_save: 'Ruaj', btn_cancel: 'Anulo',
-    layers_h2: '🗂️ Shtresat', chk_kom: 'Komunat (kufijtë)', chk_bank: 'Bankat',
+    layers_h2: '🗂️ Shtresat', chk_kom: 'Komunat (kufijtë)', chk_kufiri: 'Kufiri i Kosovës', chk_bank: 'Bankat',
     chk_atm: 'ATM', chk_transfer: 'Transferet (WU, Ria...)', lbl_basemap: 'Sfondi (basemap)',
     opt_esri: 'Esri Satelit', chk_wms: 'WMS nga GeoServer (pika 9/10)',
     wms_status_default: 'Konfiguro <code>GEOSERVER.url</code> në app.js pasi të nisësh GeoServer.',
@@ -52,7 +52,7 @@ const I18N = {
     pop_lloji: 'Lloji:', pop_komuna: 'Komuna:', pop_banka: 'Banka:', pop_atm: 'ATM:',
     pop_histori: 'Historiku', pop_report_btn: '⚠️ Raporto problem',
     legend_bank: 'Bankë', legend_atm: 'ATM', legend_transfer: 'Transfer (WU, Ria, këmbim...)',
-    legend_kom: 'Kufi komune',
+    legend_kom: 'Kufi komune', legend_kufiri: 'Kufiri shtetëror i Kosovës',
     legend_note: 'Në zoom të vogël pikat grupohen (cluster); në zoom të madh shfaqen individualisht.',
     result_count: (nb, na, nt) => `Shfaqen: ${nb} banka, ${na} ATM, ${nt} transfere (gjithsej ${nb + na + nt}).`,
     err_load: 'Gabim në ngarkimin e të dhënave. Hape aplikacionin përmes një serveri (jo file://).',
@@ -102,7 +102,7 @@ const I18N = {
     vgi_h2: '➕ Contribute (VGI)', vgi_hint: 'Add a new bank/ATM. The contribution is saved for moderation.',
     btn_vgi_add: '📌 Add on map', lbl_emri: 'Name / Brand', vgi_ph: 'e.g. NLB Banka',
     vgi_coord_empty: 'Coordinates: —', btn_save: 'Save', btn_cancel: 'Cancel',
-    layers_h2: '🗂️ Layers', chk_kom: 'Municipalities (borders)', chk_bank: 'Banks',
+    layers_h2: '🗂️ Layers', chk_kom: 'Municipalities (borders)', chk_kufiri: 'Kosovo border', chk_bank: 'Banks',
     chk_atm: 'ATMs', chk_transfer: 'Transfers (WU, Ria...)', lbl_basemap: 'Background (basemap)',
     opt_esri: 'Esri Satellite', chk_wms: 'WMS from GeoServer (point 9/10)',
     wms_status_default: 'Configure <code>GEOSERVER.url</code> in app.js after starting GeoServer.',
@@ -113,7 +113,7 @@ const I18N = {
     pop_lloji: 'Type:', pop_komuna: 'Municipality:', pop_banka: 'Banks:', pop_atm: 'ATMs:',
     pop_histori: 'History', pop_report_btn: '⚠️ Report a problem',
     legend_bank: 'Bank', legend_atm: 'ATM', legend_transfer: 'Transfer (WU, Ria, exchange...)',
-    legend_kom: 'Municipality border',
+    legend_kom: 'Municipality border', legend_kufiri: 'Kosovo national border',
     legend_note: 'At low zoom points are grouped (cluster); at high zoom they show individually.',
     result_count: (nb, na, nt) => `Showing: ${nb} banks, ${na} ATMs, ${nt} transfers (total ${nb + na + nt}).`,
     err_load: 'Error loading data. Open the app through a server (not file://).',
@@ -210,6 +210,7 @@ const clusterBank = L.markerClusterGroup({ maxClusterRadius: 40, disableClusteri
 const clusterAtm  = L.markerClusterGroup({ maxClusterRadius: 40, disableClusteringAtZoom: 12 });
 const clusterTransfer = L.markerClusterGroup({ maxClusterRadius: 40, disableClusteringAtZoom: 12 });
 let komLayer = null;          // shtresa e komunave (GeoJSON)
+let kosovaLayer = null;       // kufiri kombetar i Kosoves (GeoJSON, ngjyre dalluese)
 let bufferLayer = L.layerGroup().addTo(map);   // per analizen (Faza 2)
 
 // Etiketa e llojit sipas gjuhes aktuale
@@ -330,6 +331,10 @@ function buildMarkers(features, kind, cluster) {
 function komStyle() {
   return { color: CONFIG.colors.kom, weight: 1.5, fillColor: CONFIG.colors.kom, fillOpacity: .05, className: 'kom-path' };
 }
+// Kufiri kombetar i Kosoves — vije e trashe, ngjyre dalluese (e kuqe e erret), pa mbushje.
+function kosovaStyle() {
+  return { color: '#dc2626', weight: 3.5, opacity: .95, fill: false, lineJoin: 'round', className: 'kosova-border' };
+}
 // Stili bazë i një komune, sipas modalitetit (choropleth ose normal)
 function komBaseStyle(feature) {
   return STATE.choropleth
@@ -353,22 +358,28 @@ function buildLegend() {
     <div class="row"><span class="leg-emoji">🏧</span> ${t('legend_atm')}</div>
     <div class="row"><span class="leg-emoji">💱</span> ${t('legend_transfer')}</div>
     <div class="row"><span class="swatch line"></span> ${t('legend_kom')}</div>
+    <div class="row"><span class="swatch line kosova"></span> ${t('legend_kufiri')}</div>
     <div class="row" style="margin-top:8px"><small>${t('legend_note')}</small></div>`;
 }
 
 /* ---------------------- Ngarkimi i të dhënave ---------------------- */
 async function loadData() {
   try {
-    const [b, a, t, k] = await Promise.all([
+    const [b, a, t, k, ks] = await Promise.all([
       fetch(CONFIG.data.bank).then(r => r.json()),
       fetch(CONFIG.data.atm).then(r => r.json()),
       fetch(CONFIG.data.transfer).then(r => r.json()),
-      fetch(CONFIG.data.kom).then(r => r.json())
+      fetch(CONFIG.data.kom).then(r => r.json()),
+      fetch(CONFIG.data.kosova).then(r => r.json())
     ]);
     STATE.raw.bank = b; STATE.raw.atm = a; STATE.raw.transfer = t; STATE.raw.kom = k;
 
     // Komunat
     komLayer = L.geoJSON(k, { style: komStyle, onEachFeature: komOnEach }).addTo(map);
+
+    // Kufiri kombetar i Kosoves (mbi komunat, jo-klikues qe te mos pengoje selektimin)
+    kosovaLayer = L.geoJSON(ks, { style: kosovaStyle, interactive: false }).addTo(map);
+    kosovaLayer.bringToFront();
 
     // Pikat
     refreshPoints(b.features, a.features, t.features);
@@ -410,6 +421,7 @@ document.getElementById('lyrBank').addEventListener('change', e => toggleLayer(e
 document.getElementById('lyrAtm').addEventListener('change', e => toggleLayer(e.target, clusterAtm));
 document.getElementById('lyrTransfer').addEventListener('change', e => toggleLayer(e.target, clusterTransfer));
 document.getElementById('lyrKom').addEventListener('change', e => toggleLayer(e.target, komLayer));
+document.getElementById('lyrKufiri').addEventListener('change', e => { toggleLayer(e.target, kosovaLayer); if (e.target.checked) kosovaLayer.bringToFront(); });
 
 clusterBank.addTo(map);
 clusterAtm.addTo(map);
@@ -581,6 +593,7 @@ document.getElementById('symbByCount').addEventListener('change', e => {
   STATE.choropleth = e.target.checked;
   if (e.target.checked) {
     komLayer.setStyle(f => ({ color: '#fff', weight: 1, fillColor: choroColor(f.properties.banka_count), fillOpacity: .75 }));
+    if (kosovaLayer && map.hasLayer(kosovaLayer)) kosovaLayer.bringToFront();   // mbaje kufirin sipër mbushjeve
     setPointsVisible(false);   // fsheh bankat/atm/transferet
     showKomLabels(true);       // shfaq emrat e komunave ne qender
     buildChoroLegend();

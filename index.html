@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=15" />
 </head>
 <body>
   <!-- Buton per hapje/mbyllje te panelit ne telefon (responsive - pika 7) -->
@@ -132,6 +132,7 @@
     <!-- SHTRESAT -->
     <section class="panel">
       <h2 data-i18n="layers_h2">🗂️ Shtresat</h2>
+      <label class="checkbox"><input type="checkbox" id="lyrKufiri" checked /> <span data-i18n="chk_kufiri">Kufiri i Kosovës</span></label>
       <label class="checkbox"><input type="checkbox" id="lyrKom" checked /> <span data-i18n="chk_kom">Komunat (kufijtë)</span></label>
       <label class="checkbox"><input type="checkbox" id="lyrBank" checked /> <span data-i18n="chk_bank">Bankat</span></label>
       <label class="checkbox"><input type="checkbox" id="lyrAtm" checked /> <span data-i18n="chk_atm">ATM</span></label>
@@ -161,6 +162,6 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-  <script src="app.js?v=14"></script>
+  <script src="app.js?v=15"></script>
 </body>
 </html>
