@@ -59,26 +59,47 @@ function Read-SHPPoints($shpPath){
   return $pts
 }
 
-# ---------- Point-in-polygon per komunen ----------
-function Point-In-Ring($lon,$lat,$ring){
-  $inside=$false;$n=$ring.Count;$j=$n-1
+# ---------- Point-in-polygon per komunen (i optimizuar: arrays double[] + bbox) ----------
+# Ray casting mbi arrays tipizuar; indeksimi i ngadalte i JSON-it behet VETEM njehere ne indeks.
+function Point-In-RingXY($lon,$lat,$xs,$ys,$n){
+  $inside=$false; $j=$n-1
   for($i=0;$i -lt $n;$i++){
-    $xi=$ring[$i][0];$yi=$ring[$i][1];$xj=$ring[$j][0];$yj=$ring[$j][1]
-    if((($yi -gt $lat) -ne ($yj -gt $lat)) -and ($lon -lt ($xj-$xi)*($lat-$yi)/($yj-$yi)+$xi)){ $inside=-not $inside }
+    $yi=$ys[$i]; $yj=$ys[$j]
+    if(($yi -gt $lat) -ne ($yj -gt $lat)){
+      $xi=$xs[$i]; $xj=$xs[$j]
+      if($lon -lt ($xj-$xi)*($lat-$yi)/($yj-$yi)+$xi){ $inside=-not $inside }
+    }
     $j=$i
   }
   return $inside
 }
-Write-Host "1/4 Indeks komunash (point-in-polygon) ..."
+Write-Host "1/4 Indeks komunash (arrays + bbox) ..."
 $komJson = Get-Content (Join-Path $out "komunat.geojson") -Raw -Encoding UTF8 | ConvertFrom-Json
 $script:komIndex=@()
 foreach($f in $komJson.features){
   $rings=New-Object System.Collections.ArrayList
-  foreach($poly in $f.geometry.coordinates){ foreach($ring in $poly){ [void]$rings.Add($ring) } }
+  foreach($poly in $f.geometry.coordinates){
+    foreach($ring in $poly){
+      $n=$ring.Count
+      $xs=New-Object 'double[]' $n; $ys=New-Object 'double[]' $n
+      $minx=[double]::MaxValue;$miny=[double]::MaxValue;$maxx=[double]::MinValue;$maxy=[double]::MinValue
+      for($i=0;$i -lt $n;$i++){
+        $x=[double]$ring[$i][0]; $y=[double]$ring[$i][1]; $xs[$i]=$x; $ys[$i]=$y
+        if($x -lt $minx){$minx=$x}; if($x -gt $maxx){$maxx=$x}
+        if($y -lt $miny){$miny=$y}; if($y -gt $maxy){$maxy=$y}
+      }
+      [void]$rings.Add([pscustomobject]@{xs=$xs;ys=$ys;n=$n;minx=$minx;miny=$miny;maxx=$maxx;maxy=$maxy})
+    }
+  }
   $script:komIndex+=[pscustomobject]@{ name=$f.properties.name; rings=$rings }
 }
 function Which-Komuna($lon,$lat){
-  foreach($k in $script:komIndex){ foreach($r in $k.rings){ if(Point-In-Ring $lon $lat $r){ return $k.name } } }
+  foreach($k in $script:komIndex){
+    foreach($r in $k.rings){
+      if($lon -lt $r.minx -or $lon -gt $r.maxx -or $lat -lt $r.miny -or $lat -gt $r.maxy){ continue }   # bbox skip
+      if(Point-In-RingXY $lon $lat $r.xs $r.ys $r.n){ return $k.name }
+    }
+  }
   return ''
 }
 
@@ -87,18 +108,29 @@ Write-Host "2/4 Lexim i banka_atm_transfer.{shp,dbf} ..."
 $dbf=Read-DBFTable ($base+".dbf")
 $pts=Read-SHPPoints ($base+".shp")
 $feats=New-Object System.Collections.ArrayList
+$removed=New-Object System.Collections.ArrayList   # pikat JASHTE kufirit te Kosoves (hiqen)
 $recalc=0
 for($i=0;$i -lt $pts.Count;$i++){
   $g=$pts[$i]; if($null -eq $g){ continue }
   $row=$dbf[$i]
   $lon=[Math]::Round($g.x,6); $lat=[Math]::Round($g.y,6)
+  # Test gjeometrik: ne cilen komune bie pika. Bosh => JASHTE Kosoves => hiqe.
+  $geoKom=(Which-Komuna $lon $lat)
+  if([string]::IsNullOrWhiteSpace($geoKom)){
+    [void]$removed.Add([pscustomobject]@{ fclass=$row.fclass; name=$row.name; banka=$row.banka; lon=$lon; lat=$lat })
+    continue
+  }
   $kom=$row.komuna
-  if([string]::IsNullOrWhiteSpace($kom)){ $kom=(Which-Komuna $lon $lat); $recalc++ }
+  if([string]::IsNullOrWhiteSpace($kom)){ $kom=$geoKom; $recalc++ }   # ploteso komunen kur mungon
   [void]$feats.Add([pscustomobject]@{
     osm_id="$($row.osm_id)"; fclass=$row.fclass; name=$row.name; banka=$row.banka; komuna=$kom; lon=$lon; lat=$lat
   })
 }
-Write-Host "   -> $($feats.Count) pika gjithsej; komuna u rikalkulua per $recalc pika (te reja/bosh)"
+Write-Host "   -> $($feats.Count) pika brenda Kosoves; $($removed.Count) pika JASHTE u hoqen; komuna u plotesua per $recalc pika"
+if($removed.Count -gt 0){
+  Write-Host "   Pikat e hequra (jashte kufirit):"
+  foreach($r in $removed){ Write-Host ("     - [{0}] {1} | {2} | ({3}, {4})" -f $r.fclass,$r.name,$r.banka,$r.lat,$r.lon) }
+}
 
 # ---------- Backup + ndarje + shkrim ----------
 Write-Host "3/4 Backup i GeoJSON-eve ekzistuese (vetem hera e pare ruan origjinalin) ..."
