@@ -358,8 +358,7 @@ function buildLegend() {
     <div class="row"><span class="leg-emoji">🏧</span> ${t('legend_atm')}</div>
     <div class="row"><span class="leg-emoji">💱</span> ${t('legend_transfer')}</div>
     <div class="row"><span class="swatch line"></span> ${t('legend_kom')}</div>
-    <div class="row"><span class="swatch line kosova"></span> ${t('legend_kufiri')}</div>
-    <div class="row" style="margin-top:8px"><small>${t('legend_note')}</small></div>`;
+    <div class="row"><span class="swatch line kosova"></span> ${t('legend_kufiri')}</div>`;
 }
 
 /* ---------------------- Ngarkimi i të dhënave ---------------------- */
