@@ -294,16 +294,21 @@ function brandLogo(banka) {
 }
 
 // Ndertimi i popup-it per nje pike (logo e markes ngjitur emrit lart)
+// Historiku NUK shfaqet drejtperdrejt: jepet vetem ikona "i" prane emrit; kur
+// klikohet, shfaqet teksti (toggle behet ne 'popupopen' te buildMarkers).
 function pointPopup(p, kind) {
   const tip = typeLabel(kind);
-  let extra = '';
+  let infoBtn = '', extra = '';
   if (kind === 'bank') {                       // historiku — feature vetëm për bankat
     const h = HISTORIK[p.banka];
-    if (h) extra = `<div class="histori"><b>ℹ️ ${t('pop_histori')}${h.viti ? ' (' + h.viti + ')' : ''}:</b> ${h[LANG] || h.sq}</div>`;
+    if (h) {
+      infoBtn = `<button type="button" class="info-btn" title="${t('pop_histori')}" aria-label="${t('pop_histori')}">i</button>`;
+      extra = `<div class="histori hidden"><b>ℹ️ ${t('pop_histori')}${h.viti ? ' (' + h.viti + ')' : ''}:</b> ${h[LANG] || h.sq}</div>`;
+    }
   }
   const logo = brandLogo(p.banka);
   const logoImg = logo ? `<img class="popup-logo" src="${logo}" alt="" loading="lazy" onerror="this.style.display='none'">` : '';
-  return `<div class="popup-title">${logoImg}<b>${p.name || tip}</b></div>
+  return `<div class="popup-title">${logoImg}<b>${p.name || tip}</b>${infoBtn}</div>
           <small>${t('pop_lloji')}</small> ${tip}<br>
           <small>${t('pop_komuna')}</small> ${p.komuna || '—'}${extra}
           <div style="margin-top:6px"><button type="button" class="report-btn">${t('pop_report_btn')}</button></div>`;
@@ -318,10 +323,16 @@ function buildMarkers(features, kind, cluster) {
     const m = L.marker([c[1], c[0]], { icon });
     m.feature = f;
     m.bindPopup(pointPopup(f.properties, kind));
-    // Lidh butonin "Raporto" me te dhenat e kesaj pike kur hapet popup-i
+    // Lidh butonin "Raporto" + ikonen "i" (toggle i historikut) kur hapet popup-i
     m.on('popupopen', e => {
-      const btn = e.popup.getElement().querySelector('.report-btn');
+      const el = e.popup.getElement();
+      const btn = el.querySelector('.report-btn');
       if (btn) btn.onclick = () => openReport(f.properties, c);
+      const info = el.querySelector('.info-btn');
+      if (info) info.onclick = () => {
+        const hist = el.querySelector('.histori');
+        if (hist) { hist.classList.toggle('hidden'); info.classList.toggle('active'); e.popup.update(); }
+      };
     });
     cluster.addLayer(m);
   });

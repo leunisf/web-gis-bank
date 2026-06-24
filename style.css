@@ -91,6 +91,12 @@ button.active{background:var(--accent);border-color:#fff;color:#fff}
 .popup-title{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .popup-logo{width:26px;height:26px;object-fit:contain;flex:0 0 auto;
   border-radius:5px;background:#fff;border:1px solid #e2e8f0;padding:1px}
+/* Ikona "i" qe shfaq/fsheh historikun e bankes */
+.info-btn{flex:0 0 auto;width:19px;height:19px;border-radius:50%;border:none;cursor:pointer;
+  background:#2563eb;color:#fff;font:italic 700 12px/19px Georgia,'Times New Roman',serif;
+  text-align:center;padding:0;margin-left:2px}
+.info-btn:hover{background:#1d4ed8}
+.info-btn.active{background:#1e3a8a}
 
 /* cluster ngjyra sipas dendesise */
 .marker-cluster{background:rgba(37,99,235,.35)}
