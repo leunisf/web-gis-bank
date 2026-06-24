@@ -331,7 +331,12 @@ function buildMarkers(features, kind, cluster) {
       const info = el.querySelector('.info-btn');
       if (info) info.onclick = () => {
         const hist = el.querySelector('.histori');
-        if (hist) { hist.classList.toggle('hidden'); info.classList.toggle('active'); e.popup.update(); }
+        if (!hist) return;
+        // SHENIM: mos thirr e.popup.update() — ai ri-rendëron HTML-në origjinale dhe
+        // ia rikthen klasën 'hidden'. Toggle direkt + ripozicionim pa ri-render.
+        hist.classList.toggle('hidden');
+        info.classList.toggle('active');
+        if (e.popup._adjustPan) e.popup._adjustPan();
       };
     });
     cluster.addLayer(m);
